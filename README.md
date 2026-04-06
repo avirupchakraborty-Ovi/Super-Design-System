@@ -1,5 +1,32 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## **Designer Reference**
+
+# Design System
+
+This system helps designers build screens using structured rules.
+
+## Start here
+
+→ For screen layout and pattern guidance, see [docs/SCREENS.md](docs/SCREENS.md)
+
+## Core files
+
+- `LAYOUT.md` → layout structure and constraints
+- `COMPONENT_MAP.md` → component selection rules
+- `PATTERNS.md` → screen composition rules
+
+## Workflow
+
+1. Write a prompt
+2. Specify pattern + intent (or let Claude suggest)
+3. Confirm with Claude
+4. Generate screen
+
+## Rule
+
+Do not design outside the system.
+
 ## Getting Started
 
 First, run the development server:
