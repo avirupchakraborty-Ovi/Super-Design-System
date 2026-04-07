@@ -111,7 +111,7 @@ Provides an at-a-glance overview of key metrics, performance trends, recent acti
 **[metrics]**
 - **Allowed:** `StatCard`, `ChartCard`
 - **Do NOT Allow:** `ChartFullWidth`, `DataTable`, `Card`, `ActionCard`
-- **Constraints:** Components MUST be arranged using a grid appropriate to the number of items (per LAYOUT.md grid rules). Column count MUST be determined by layout constraints, not pattern rules. MUST use `items-stretch` (per LAYOUT.md LB4). MUST NOT mix `StatCard` and `ChartCard` in the same grid instance.
+- **Constraints:** Components MUST be arranged using a grid appropriate to the number of items (per LAYOUT.md grid rules). Column count MUST be determined by layout constraints, not pattern rules. MUST use `items-stretch` (per LAYOUT.md LB4). MUST NOT mix `StatCard` and `ChartCard` in the same grid instance. When 5 or 6 components are used, a 3-column grid MUST be used to keep the metrics section compact and prevent it from dominating the screen.
 - **Ordering:** No prescribed order within the grid.
 
 **[primary-chart]**
@@ -135,7 +135,7 @@ Provides an at-a-glance overview of key metrics, performance trends, recent acti
 
 #### Content Density Rules
 
-- **[metrics]:** Minimum 2 components. Maximum 4 components. Grid configuration follows LAYOUT.md grid rules. If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8).
+- **[metrics]:** Minimum 2 components. Maximum 6 components. Grid configuration follows LAYOUT.md grid rules. If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8). When 5 or 6 components are used, a 3-column grid MUST be used.
 - **[primary-chart]:** Exactly 1 `ChartFullWidth` or omit slot entirely.
 - **[activity]:** Show `EmptyState` when 0 records. Paginate when `DataTable` exceeds 10 rows. Paginate when `TableList` exceeds 20 rows.
 - **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
@@ -420,7 +420,7 @@ Displays all information about a single entity (product, post, contact, order) w
 
 #### Content Density Rules
 
-- **[summary] StatCards:** Minimum 2. Maximum 4. If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8).
+- **[summary] StatCards:** Minimum 2. Maximum 6. If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8). When 5 or 6 components are used, a 3-column grid MUST be used.
 - **[section-nav] tabs:** Minimum 2 tabs. Maximum 6 tabs. If more than 6 sections exist, consolidate into broader categories — do not render more than 6 tabs.
 - **[section-content]:** Show `EmptyState` when the active tab has no data — the section heading and [section-nav] MUST remain visible.
 
