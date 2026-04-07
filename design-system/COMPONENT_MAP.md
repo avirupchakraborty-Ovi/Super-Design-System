@@ -415,6 +415,9 @@ Renders a sub-section heading row within a content area, card, or panel. Combine
 - `ToggleRow` size (`sm`/`lg`) MUST be consistent across all rows in the same list.
 - `ToggleRow` position (`start`/`end`) MUST be consistent across all rows in the same list.
 - `ToggleRow` MUST NOT be placed inside a data table cell.
+- `ToggleRow` has built-in padding (`px-150 py-100`) and background (`bg-surface-level1`) by default (`padding="default"`).
+- When placing `ToggleRow` inside a bordered card, form section, or any container that already provides padding and background, use `padding="none"` to suppress the built-in padding and background. This prevents double-padding and misaligned inset.
+- `padding="none"` MUST NOT be used in standalone settings lists — the default padding is required for correct tap target and visual rhythm.
 
 **Composition Rules**
 - `ToggleRow` MAY use the `slot` prop to reveal additional configuration content when toggled ON.

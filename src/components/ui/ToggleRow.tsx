@@ -37,6 +37,11 @@ export interface ToggleRowProps {
   imageAlt?: string;
   /** Optional slot content rendered below the main row */
   slot?: ReactNode;
+  /**
+   * "default" — built-in px-150 py-100 padding and bg-surface-level1 background (use in standalone settings lists)
+   * "none"    — no padding or background (use inside bordered cards or form sections that already provide padding)
+   */
+  padding?: "default" | "none";
   className?: string;
 }
 
@@ -54,6 +59,7 @@ export function ToggleRow({
   image,
   imageAlt = "",
   slot,
+  padding = "default",
   className,
 }: ToggleRowProps) {
   const labelClass = disabled ? "text-text-level4" : "text-text-level1";
@@ -70,12 +76,17 @@ export function ToggleRow({
   );
 
   return (
-    <div className={cn("flex flex-col rounded-100 bg-surface-level1", className)}>
+    <div className={cn(
+      "flex flex-col",
+      padding === "default" && "rounded-100 bg-surface-level1",
+      className,
+    )}>
       {/* ── Main row ──────────────────────────────────────────── */}
       <div
         onClick={() => !disabled && onChange?.(!checked)}
         className={cn(
-          "flex items-start px-150 py-100 gap-100",
+          "flex items-start gap-100",
+          padding === "default" && "px-150 py-100",
           disabled ? "cursor-not-allowed" : "cursor-pointer",
         )}
       >
