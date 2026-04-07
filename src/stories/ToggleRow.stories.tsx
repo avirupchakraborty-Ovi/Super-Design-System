@@ -33,6 +33,7 @@ const meta: Meta<typeof ToggleRow> = {
     size: { control: "select", options: ["sm", "lg"] },
     disabled: { control: "boolean" },
     position: { control: "select", options: ["start", "end"] },
+    padding: { control: "select", options: ["default", "none"] },
     label: { control: "text" },
     subText: { control: "text" },
   },
@@ -158,6 +159,43 @@ export const WithSlot: Story = {
           </div>
         }
       />
+    </div>
+  ),
+};
+
+/** Padding variants — default vs none
+ *  Use padding="none" inside bordered cards or form sections that already
+ *  provide their own padding. Use padding="default" in standalone settings lists.
+ */
+export const PaddingVariants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-300 max-w-lg">
+      <div>
+        <p className="mb-50 text-supporting text-text-level3">Default — standalone settings list</p>
+        <div className="flex flex-col gap-50">
+          <ToggleRow label="Push notifications" subText="Get notified about important activity" checked />
+          <ToggleRow label="Email digest" subText="Weekly summary of your account" />
+        </div>
+      </div>
+      <div>
+        <p className="mb-50 text-supporting text-text-level3">None — inside a bordered form section</p>
+        <div className="flex flex-col gap-100 p-200 rounded-100 border border-border-color-level2">
+          <span className="text-body font-medium text-text-level1">Schedule</span>
+          <div className="flex flex-col gap-100">
+            <ToggleRow
+              label="No end date"
+              subText="Your ad set will run continuously until paused"
+              padding="none"
+            />
+            <ToggleRow
+              label="Use automatic placements"
+              subText="Let us choose the best placements for your budget"
+              padding="none"
+              checked
+            />
+          </div>
+        </div>
+      </div>
     </div>
   ),
 };
