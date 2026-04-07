@@ -54,12 +54,14 @@ export function CheckboxRow({
   const subTextClass = disabled ? "text-text-level4" : "text-text-level3";
 
   const checkboxEl = (
-    <Checkbox
-      checked={checked}
-      indeterminate={indeterminate}
-      disabled={disabled}
-      onChange={onChange}
-    />
+    <span onClick={(e) => e.stopPropagation()}>
+      <Checkbox
+        checked={checked}
+        indeterminate={indeterminate}
+        disabled={disabled}
+        onChange={onChange}
+      />
+    </span>
   );
 
   return (
