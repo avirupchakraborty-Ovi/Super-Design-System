@@ -22,6 +22,8 @@ export type DropdownMenuChevronTriggerSize = "md" | "sm";
 
 export interface DropdownMenuChevronTriggerProps {
   children: ReactNode;
+  /** Optional leading icon */
+  icon?: TablerIcon;
   /** Size variant — md: 10px vertical padding (default), sm: 8px vertical padding */
   size?: DropdownMenuChevronTriggerSize;
   className?: string;
@@ -34,6 +36,7 @@ const chevronTriggerSizeStyles: Record<DropdownMenuChevronTriggerSize, string> =
 
 export function DropdownMenuChevronTrigger({
   children,
+  icon,
   size = "md",
   className,
 }: DropdownMenuChevronTriggerProps) {
@@ -50,6 +53,9 @@ export function DropdownMenuChevronTrigger({
         className,
       )}
     >
+      {icon && (
+        <Icon icon={icon} size={size === "sm" ? "sm" : "md"} noOffset className="shrink-0 text-text-level3" />
+      )}
       <span className="flex-1 min-w-0 truncate">{children}</span>
       <span className="inline-flex shrink-0 items-center justify-center transition-transform group-data-[state=open]:rotate-180">
         <Icon
