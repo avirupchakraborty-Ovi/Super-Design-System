@@ -122,8 +122,8 @@ export function Icon({
       style={{ width: config.frame, height: config.frame }}
     >
       <TablerIcon
-        size={config.vector}
-        stroke={svgStroke}
+        size={String(config.vector)}
+        stroke={String(svgStroke)}
         color={color}
         viewBox={viewBox}
         style={{

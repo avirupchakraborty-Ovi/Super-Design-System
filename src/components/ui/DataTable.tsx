@@ -158,7 +158,7 @@ function HeaderCell({
   showSortIcons,
   roundTopCorners,
 }: {
-  col: DataTableColumn;
+  col: Pick<DataTableColumn, "key" | "label" | "width" | "sortable" | "info">;
   isFirst: boolean;
   isLast: boolean;
   type: DataTableType;

@@ -186,7 +186,7 @@ export function ChartFullWidth({
                 return (
                   <text
                     x={x}
-                    y={y + 8}
+                    y={(y as number) + 8}
                     textAnchor={anchor}
                     fontSize={12}
                     fill="#808080"
