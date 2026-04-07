@@ -123,7 +123,7 @@ export interface DropdownMenuContentProps {
 export function DropdownMenuContent({
   children,
   sideOffset = 4,
-  align = "start",
+  align = "end",
   width = 330,
   borderless = false,
   className,
