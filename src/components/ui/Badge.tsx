@@ -70,7 +70,7 @@ export function Badge({
   fill = "light",
   type = "full-rounded",
   border = true,
-  shadow = true,
+  shadow = false,
   leadingIcon,
   trailingIcon,
   showLeadingIcon = true,

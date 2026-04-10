@@ -10,7 +10,7 @@ export interface ThumbnailProps {
   alt?: string;
   /** Size variant — lg: 52px, md: 44px, sm: 36px, xs: 24px */
   size?: ThumbnailSize;
-  /** Shape — square uses radius-100 (8px), circle is fully rounded */
+  /** Shape — square uses rounded-050 (4px), circle is fully rounded */
   type?: ThumbnailType;
   /** Additional CSS classes */
   className?: string;
@@ -34,13 +34,12 @@ export function Thumbnail({
 
   return (
     <div
-      className={cn("shrink-0 overflow-hidden", className)}
-      style={{
-        width: px,
-        height: px,
-        // radius-050 token = 4px. Circle uses 9999px (fully rounded at any size).
-        borderRadius: type === "circle" ? 9999 : 4,
-      }}
+      className={cn(
+        "shrink-0 overflow-hidden",
+        type === "circle" ? "rounded-500" : "rounded-050",
+        className,
+      )}
+      style={{ width: px, height: px }}
     >
       <img
         src={src}

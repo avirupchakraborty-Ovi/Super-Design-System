@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { cn } from "@/lib/cn";
+import { Button } from "@/components/ui/Button";
 
 export interface CoverImageUploadProps {
   label?: string;
@@ -42,7 +43,7 @@ export function CoverImageUpload({
   }
 
   return (
-    <div className={cn("flex flex-col gap-50 w-[450px]", className)}>
+    <div className={cn("flex flex-col gap-50 w-full", className)}>
 
       {/* Label */}
       <span className="text-body font-normal text-text-level1">{label}</span>
@@ -120,13 +121,14 @@ export function CoverImageUpload({
                 placeholder="Enter URL"
                 className="flex-1 text-body font-normal text-text-level1 bg-transparent outline-none placeholder:text-text-level3 min-w-0"
               />
-              <button
-                type="button"
+              <Button
+                variant="outline"
+                shape="full-rounded"
+                size="inline"
                 onClick={handleAdd}
-                className="shrink-0 rounded-500 border-[length:var(--border-width-025)] border-border-color-level2 px-200 py-75 text-body font-medium text-text-level1 cursor-pointer hover:bg-surface-level2"
               >
                 Add
-              </button>
+              </Button>
             </div>
           </>
         )}
