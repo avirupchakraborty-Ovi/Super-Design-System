@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import React, { useState } from "react";
-import { IconBrandInstagram, IconBrandYoutube, IconEdit, IconTrash, IconEye } from "@tabler/icons-react";
+import { IconBrandInstagram, IconBrandYoutube, IconEdit, IconTrash, IconEye, IconCopy, IconShare, IconDownload } from "@tabler/icons-react";
 import { DataTable } from "@/components/ui/DataTable";
 import { Badge } from "@/components/ui/Badge";
 import { BadgeWithText } from "@/components/ui/BadgeWithText";
@@ -171,6 +171,19 @@ const ACTIONS_CELL = (
   />
 );
 
+const OVERFLOW_ACTIONS_CELL = (
+  <TableActionGroup
+    actions={[
+      { icon: IconEye,      label: "View",      onClick: () => {} },
+      { icon: IconEdit,     label: "Edit",      onClick: () => {} },
+      { icon: IconCopy,     label: "Duplicate", onClick: () => {} },
+      { icon: IconShare,    label: "Share",     onClick: () => {} },
+      { icon: IconDownload, label: "Export",    onClick: () => {} },
+      { icon: IconTrash,    label: "Delete",    onClick: () => {} },
+    ]}
+  />
+);
+
 const RICH_COLUMNS = [
   {
     key: "name",
@@ -236,6 +249,35 @@ export const LineRichCells: Story = {
     return (
       <DataTable
         columns={RICH_COLUMNS}
+        data={RICH_DATA}
+        searchValue={search}
+        onSearch={setSearch}
+        onFilter={() => {}}
+        onSort={() => {}}
+        onExport={() => {}}
+      />
+    );
+  },
+};
+
+// ── Line — With Overflow Actions ──────────────────────────────────────────────
+
+const OVERFLOW_COLUMNS = [
+  ...RICH_COLUMNS.slice(0, -1),
+  {
+    key: "actions",
+    label: "Actions",
+    render: () => OVERFLOW_ACTIONS_CELL,
+  },
+];
+
+/** Line table with >3 row actions — first 2 shown inline, rest collapsed into overflow dots */
+export const LineWithOverflowActions: Story = {
+  render: () => {
+    const [search, setSearch] = useState("");
+    return (
+      <DataTable
+        columns={OVERFLOW_COLUMNS}
         data={RICH_DATA}
         searchValue={search}
         onSearch={setSearch}
