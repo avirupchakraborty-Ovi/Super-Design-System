@@ -476,7 +476,7 @@
   --shadow-chart:    0px 0px 2px rgba(0,0,0,0.04);
 
   /* Layout Structure */
-  --layout-sidebar-width:     230px;
+  --layout-sidebar-width:     225px;
   --layout-content-max-width: 680px;
 
 }

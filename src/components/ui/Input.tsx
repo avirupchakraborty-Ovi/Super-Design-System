@@ -94,7 +94,7 @@ const copyButtonWidths: Record<InputSize, string> = {
 
 export function Input({
   size = "md",
-  shape = "full-rounded",
+  shape = "semi-rounded",
   label,
   required = false,
   tooltip = false,

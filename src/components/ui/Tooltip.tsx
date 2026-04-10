@@ -28,7 +28,7 @@ export function Tooltip({
   tipSide = "top",
   tipAlign = "start",
   color = "black",
-  size = "md",
+  size = "label",
   ...cardProps
 }: TooltipProps) {
   // tipSide = which edge of the card the arrow sits on.

@@ -85,7 +85,7 @@ const FLAG_HEIGHT = 16;
 
 export function PhoneInput({
   size = "md",
-  shape = "full-rounded",
+  shape = "semi-rounded",
   label,
   required = false,
   tooltip = false,

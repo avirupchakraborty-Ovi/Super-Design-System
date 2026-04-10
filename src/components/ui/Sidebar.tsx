@@ -60,7 +60,7 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        "flex flex-col w-[225px] h-full bg-surface-sidebar",
+        "flex flex-col w-[var(--layout-sidebar-width)] h-full bg-surface-sidebar",
         className,
       )}
     >
