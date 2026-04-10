@@ -3,9 +3,9 @@ import {
   IconEdit,
   IconTrash,
   IconEye,
-  IconPlus,
-  IconDots,
+  IconCopy,
   IconShare,
+  IconDownload,
 } from "@tabler/icons-react";
 import { TableActionGroup } from "@/components/ui/TableActionGroup";
 
@@ -27,19 +27,28 @@ const meta: Meta<typeof TableActionGroup> = {
 export default meta;
 type Story = StoryObj<typeof TableActionGroup>;
 
-export const Default: Story = {
+export const OneAction: Story = {
   render: () => (
     <TableActionGroup
       actions={[
-        { icon: IconPlus, label: "Add", onClick: () => {} },
-        { icon: IconPlus, label: "Add second", onClick: () => {} },
-        { icon: IconPlus, label: "Add third", onClick: () => {} },
+        { icon: IconEye, label: "View", onClick: () => {} },
       ]}
     />
   ),
 };
 
-export const EditDeleteView: Story = {
+export const TwoActions: Story = {
+  render: () => (
+    <TableActionGroup
+      actions={[
+        { icon: IconEye,  label: "View", onClick: () => {} },
+        { icon: IconEdit, label: "Edit", onClick: () => {} },
+      ]}
+    />
+  ),
+};
+
+export const ThreeActions: Story = {
   render: () => (
     <TableActionGroup
       actions={[
@@ -51,12 +60,16 @@ export const EditDeleteView: Story = {
   ),
 };
 
-export const ShareAndMore: Story = {
+export const WithOverflow: Story = {
   render: () => (
     <TableActionGroup
       actions={[
-        { icon: IconShare, label: "Share", onClick: () => {} },
-        { icon: IconDots,  label: "More",  onClick: () => {} },
+        { icon: IconEye,      label: "View",      onClick: () => {} },
+        { icon: IconEdit,     label: "Edit",      onClick: () => {} },
+        { icon: IconCopy,     label: "Duplicate", onClick: () => {} },
+        { icon: IconShare,    label: "Share",     onClick: () => {} },
+        { icon: IconDownload, label: "Export",    onClick: () => {} },
+        { icon: IconTrash,    label: "Delete",    onClick: () => {} },
       ]}
     />
   ),
