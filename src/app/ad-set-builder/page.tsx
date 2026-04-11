@@ -197,7 +197,7 @@ export default function AdSetBuilderPage() {
             {/* Heading — matches main column width */}
             <div className="w-[var(--layout-content-max-width)] min-w-0 flex flex-col gap-50">
               <h1 className="text-h2 font-semibold text-text-level1">Create Ad Set</h1>
-              <p className="text-body text-text-level3">Define your audience, budget, and where your ads will appear</p>
+              <p className="text-body font-normal text-text-level3">Define your audience, budget, and where your ads will appear</p>
             </div>
             {/* Actions — matches aside panel width (SP8 exception: w-[260px]) */}
             <div className="w-[260px] flex-none flex items-center justify-end gap-100">
@@ -419,8 +419,13 @@ export default function AdSetBuilderPage() {
                     </div>
 
                     {/* Bidding */}
-                    <div className="flex flex-col gap-100">
-                      <SectionHeader label="Bidding strategy" subText="How you want to bid for your results" />
+                    <div className="flex flex-col gap-50">
+                      <Label
+                        label="Bidding strategy"
+                        variant="supporting-medium"
+                        tooltip
+                        tooltipContent="How you want to bid for your results"
+                      />
                       <DropdownMenu>
                         <DropdownMenuChevronTrigger>
                           {biddingStrategy}

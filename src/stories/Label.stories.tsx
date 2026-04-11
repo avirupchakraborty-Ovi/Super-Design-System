@@ -15,6 +15,7 @@ const meta: Meta<typeof Label> = {
     variant: "body-medium",
     mandatory: false,
     tooltip: false,
+    tooltipContent: "",
   },
   argTypes: {
     label: { control: "text" },
@@ -30,6 +31,7 @@ const meta: Meta<typeof Label> = {
     },
     mandatory: { control: "boolean" },
     tooltip: { control: "boolean" },
+    tooltipContent: { control: "text" },
   },
 };
 
@@ -69,9 +71,14 @@ export const WithMandatory: Story = {
   args: { mandatory: true },
 };
 
-/** With tooltip icon */
+/** With tooltip icon — no content (click handler only) */
 export const WithTooltip: Story = {
   args: { tooltip: true },
+};
+
+/** With tooltip content — hover to reveal */
+export const WithTooltipContent: Story = {
+  args: { tooltip: true, tooltipContent: "This setting controls how your field behaves." },
 };
 
 /** All variants — hierarchy overview */
