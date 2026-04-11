@@ -16,6 +16,7 @@ const meta: Meta<typeof Input> = {
     shape: "semi-rounded",
     size: "md",
     label: "Label",
+    labelVariant: "body-medium",
     placeholder: "Type here",
     helpText: "This is a description text informing on how to use the input field.",
     disabled: false,
@@ -26,6 +27,10 @@ const meta: Meta<typeof Input> = {
   argTypes: {
     size: { control: "select", options: ["sm", "md", "lg"] },
     shape: { table: { disable: true } },
+    labelVariant: {
+      control: "select",
+      options: ["body-regular", "body-medium", "supporting-medium", "supporting-semibold"],
+    },
     type: { control: "select", options: ["text", "email", "tel", "url", "password"] },
     multiline: { control: "boolean" },
     rows: { control: "number" },
@@ -69,8 +74,20 @@ export const States: Story = {
   ),
 };
 
+/** body-regular, body-medium, supporting-medium, supporting-semibold */
+export const LabelHierarchy: Story = {
+  render: () => (
+    <div className="flex flex-col gap-300 max-w-sm">
+      <Input shape="semi-rounded" label="body-regular" labelVariant="body-regular" placeholder="Lowest visual weight" helpText="Secondary or descriptive labels." />
+      <Input shape="semi-rounded" label="body-medium" labelVariant="body-medium" placeholder="Standard field label" helpText="Default — use in most forms." />
+      <Input shape="semi-rounded" label="supporting-medium" labelVariant="supporting-medium" placeholder="Compact, de-emphasised" helpText="Dense forms where labels recede." />
+      <Input shape="semi-rounded" label="supporting-semibold" labelVariant="supporting-semibold" placeholder="Compact but prominent" helpText="Stands out at small size." />
+    </div>
+  ),
+};
+
 /** Plain, required, tooltip, required + tooltip */
-export const LabelVariants: Story = {
+export const LabelOptions: Story = {
   render: () => (
     <div className="flex flex-col gap-300 max-w-sm">
       <Input shape="semi-rounded" label="Plain label" placeholder="Type here" />

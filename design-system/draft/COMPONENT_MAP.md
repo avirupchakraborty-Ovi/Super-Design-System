@@ -1,6 +1,6 @@
 # COMPONENT_MAP.md
 ## Super Design System — Component Selection Rules
-`Version 1.5 | Depends on: LAYOUT.md | Priority: Second — see AGENTS.md for full priority chain`
+`Version 1.6 | Depends on: LAYOUT.md | Priority: Second — see AGENTS.md for full priority chain`
 
 ---
 
@@ -214,8 +214,20 @@ Single-line or multiline text entry field for user data input.
 **Constraints**
 - MUST use `w-full` within its container. Fixed pixel widths are PROHIBITED.
 - MUST use the `label` prop for all form field labels. Raw `<label>` elements outside the component are PROHIBITED.
+- Label hierarchy MUST be set via the `labelVariant` prop. Default is `body-medium`. `supporting-caps` is PROHIBITED — it MUST NOT be used as a direct field label per T3.
 - Error state MUST be communicated via the `error` prop — not by external text below the field.
 - `copyable` inputs are automatically read-only — MUST NOT allow user editing.
+
+**Label Variants**
+
+| Variant | When to use |
+|---------|-------------|
+| `body-regular` | Lowest visual weight — secondary or descriptive labels |
+| `body-medium` | DEFAULT. Standard field label — use in most forms |
+| `supporting-medium` | Dense or compact forms where labels are de-emphasised |
+| `supporting-semibold` | Compact but prominent — stands out at small size |
+
+`supporting-caps` is excluded. It MUST NOT be used as a direct field label above a control (T3).
 
 **Variants (Shape)**
 

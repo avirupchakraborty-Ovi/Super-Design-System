@@ -5,9 +5,26 @@ import { IconInfoCircle, IconCopy } from "@tabler/icons-react";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
+import type { LabelVariant } from "@/components/ui/Label";
 
 export type InputSize = "sm" | "md" | "lg";
 export type InputShape = "full-rounded" | "semi-rounded";
+
+type InputLabelVariant = Exclude<LabelVariant, "supporting-caps">;
+
+const labelVariantClasses: Record<InputLabelVariant, string> = {
+  "body-regular":        "text-body font-normal",
+  "body-medium":         "text-body font-medium",
+  "supporting-medium":   "text-supporting font-medium",
+  "supporting-semibold": "text-supporting font-semibold",
+};
+
+const asteriskVariantClasses: Record<InputLabelVariant, string> = {
+  "body-regular":        "text-body font-normal",
+  "body-medium":         "text-body font-normal",
+  "supporting-medium":   "text-supporting font-normal",
+  "supporting-semibold": "text-supporting font-normal",
+};
 
 type TablerIcon = ComponentType<
   SVGProps<SVGSVGElement> & { size?: number | string; stroke?: number | string }
@@ -20,6 +37,8 @@ export interface InputProps {
   shape?: InputShape;
   /** Label rendered above the field */
   label?: string;
+  /** Typography hierarchy for the label — defaults to body-medium */
+  labelVariant?: InputLabelVariant;
   /** Shows a mandatory asterisk (*) after the label */
   required?: boolean;
   /** Shows a tooltip info icon after the label */
@@ -96,6 +115,7 @@ export function Input({
   size = "md",
   shape = "semi-rounded",
   label,
+  labelVariant = "body-medium",
   required = false,
   tooltip = false,
   onTooltipClick,
@@ -173,14 +193,14 @@ export function Input({
         <div className="inline-flex items-center gap-50">
           <label
             htmlFor={inputId}
-            className={cn("text-body font-medium", labelTextClass)}
+            className={cn(labelVariantClasses[labelVariant], labelTextClass)}
           >
             {label}
           </label>
           {required && (
             <span
               className={cn(
-                "text-body font-normal",
+                asteriskVariantClasses[labelVariant],
                 disabled ? "text-text-level4" : "text-text-critical-3",
               )}
             >
