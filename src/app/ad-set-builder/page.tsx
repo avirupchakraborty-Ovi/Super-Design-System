@@ -382,6 +382,28 @@ export default function AdSetBuilderPage() {
                             : "Minimum lifetime budget: ₹1,000"
                         }
                       />
+
+                      {/* Bidding */}
+                      <div className="flex flex-col gap-50">
+                        <Label
+                          label="Bidding strategy"
+                          variant="supporting-medium"
+                          tooltip
+                          tooltipContent="How you want to bid for your results"
+                        />
+                        <DropdownMenu>
+                          <DropdownMenuChevronTrigger>
+                            {biddingStrategy}
+                          </DropdownMenuChevronTrigger>
+                          <DropdownMenuContent width={300}>
+                            <DropdownMenuRadioGroup value={biddingStrategy} onValueChange={setBiddingStrategy}>
+                              {BIDDING_STRATEGIES.map((s) => (
+                                <DropdownMenuRadioItem key={s} value={s}>{s}</DropdownMenuRadioItem>
+                              ))}
+                            </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
 
                     {/* Schedule */}
@@ -416,28 +438,6 @@ export default function AdSetBuilderPage() {
                         onChange={setNoEndDate}
                         padding="none"
                       />
-                    </div>
-
-                    {/* Bidding */}
-                    <div className="flex flex-col gap-50">
-                      <Label
-                        label="Bidding strategy"
-                        variant="supporting-medium"
-                        tooltip
-                        tooltipContent="How you want to bid for your results"
-                      />
-                      <DropdownMenu>
-                        <DropdownMenuChevronTrigger>
-                          {biddingStrategy}
-                        </DropdownMenuChevronTrigger>
-                        <DropdownMenuContent width={300}>
-                          <DropdownMenuRadioGroup value={biddingStrategy} onValueChange={setBiddingStrategy}>
-                            {BIDDING_STRATEGIES.map((s) => (
-                              <DropdownMenuRadioItem key={s} value={s}>{s}</DropdownMenuRadioItem>
-                            ))}
-                          </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </div>
                 </AccordionItem>
