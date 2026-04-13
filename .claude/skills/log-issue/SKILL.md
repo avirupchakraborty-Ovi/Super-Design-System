@@ -33,8 +33,6 @@ Determine:
 
 ## Step 3 — Ask the designer two questions
 
-Ask (and only these two — do not ask for anything else):
-
 1. **Proposed fix?** (optional — they can skip this)
 2. **Priority?** (High / Medium / Low)
 
