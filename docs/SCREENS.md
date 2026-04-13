@@ -1,6 +1,6 @@
 # SCREENS.md
 ## SuperProfile Design System — Screen Reference for Designers
-`Quick reference only. Full rules in LAYOUT.md, PATTERNS.md, COMPONENT_MAP.md.`
+`Quick reference only. Full rules in LAYOUT.md, PATTERNS.md, COMPONENT_MAP.md, UX_RULES.md.`
 
 ---
 
@@ -11,6 +11,7 @@
 | `full-stretch` | Data-heavy screens, dashboards, lists — content fills the full width | Home, Analytics, Payments, Store |
 | `centered` | Settings, account, focused forms — content has a natural max-width | Account Settings, Profile |
 | `aside-panel` | Builder or config screens with a supplementary info/preview panel on the right | Audience Builder, Store Settings |
+| `proportional-split` | Creation or editing flows that need a real-time live preview alongside the form — equal-width two-column split | Product creation with live preview, Email template editor |
 
 ---
 
