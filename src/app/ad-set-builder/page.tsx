@@ -245,95 +245,123 @@ export default function AdSetBuilderPage() {
                   subText="Define who sees your ads"
                   leadingIcon={IconUsers}
                 >
-                  <div className="flex flex-col gap-200 pt-100">
+                  <div className="flex flex-col gap-300 pt-100">
 
-                    {/* Demographics */}
-                    <div className="flex flex-col gap-100">
+                    {/* Demographics — SP5: gap-200 between SectionHeader and fields */}
+                    <div className="flex flex-col gap-200">
                       <SectionHeader label="Demographics" subText="Location and age range" />
 
-                      {/* Location */}
-                      <div className="flex flex-col gap-50">
-                        <Label label="Locations" variant="supporting-medium" />
-                        <DropdownMenu>
-                          <DropdownMenuChevronTrigger icon={IconMapPin}>
-                            {selectedLocations.length === 0
-                              ? "Select locations"
-                              : selectedLocations.length === 1
-                              ? selectedLocations[0]
-                              : `${selectedLocations.length} locations selected`}
-                          </DropdownMenuChevronTrigger>
-                          <DropdownMenuContent width={300}>
-                            {LOCATIONS.map((loc) => (
-                              <DropdownMenuCheckboxItem
-                                key={loc}
-                                checked={selectedLocations.includes(loc)}
-                                onCheckedChange={() => toggleLocation(loc)}
-                              >
-                                {loc}
-                              </DropdownMenuCheckboxItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                      {/* Fields group — SP3: gap-150 between peer field groups */}
+                      <div className="flex flex-col gap-150">
 
-                      {/* Age range — compact related pair, grouped horizontally per UX10/UX-AP2 */}
+                        {/* Location */}
+                        <div className="flex flex-col gap-50">
+                          <Label label="Locations" variant="supporting-medium" />
+                          <DropdownMenu>
+                            <DropdownMenuChevronTrigger variant="form" icon={IconMapPin}>
+                              {selectedLocations.length === 0
+                                ? "Select locations"
+                                : selectedLocations.length === 1
+                                ? selectedLocations[0]
+                                : `${selectedLocations.length} locations selected`}
+                            </DropdownMenuChevronTrigger>
+                            <DropdownMenuContent width={300}>
+                              {LOCATIONS.map((loc) => (
+                                <DropdownMenuCheckboxItem
+                                  key={loc}
+                                  checked={selectedLocations.includes(loc)}
+                                  onCheckedChange={() => toggleLocation(loc)}
+                                >
+                                  {loc}
+                                </DropdownMenuCheckboxItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+
+                        {/* Age range — compact related pair, grouped horizontally */}
+                        <div className="grid grid-cols-2 gap-100">
+                          <Input
+                            label="Minimum Age"
+                            labelVariant="supporting-medium"
+                            size="md"
+                            shape="semi-rounded"
+                            placeholder="18"
+                            value={ageMin}
+                            onChange={(e) => setAgeMin(e.target.value)}
+                            helpText="Minimum: 18"
+                          />
+                          <Input
+                            label="Maximum Age"
+                            labelVariant="supporting-medium"
+                            size="md"
+                            shape="semi-rounded"
+                            placeholder="65"
+                            value={ageMax}
+                            onChange={(e) => setAgeMax(e.target.value)}
+                            helpText="Maximum: 65"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interests & Behaviors — SP5: gap-200 between SectionHeader and fields */}
+                    <div className="flex flex-col gap-200">
+                      <SectionHeader
+                        label="Interests & Behaviors"
+                        subText="Target people based on what they care about and how they act"
+                      />
+
                       <div className="grid grid-cols-2 gap-100">
-                        <Input
-                          label="Minimum Age"
-                          size="md"
-                          shape="semi-rounded"
-                          placeholder="18"
-                          value={ageMin}
-                          onChange={(e) => setAgeMin(e.target.value)}
-                          helpText="Minimum: 18"
-                        />
-                        <Input
-                          label="Maximum Age"
-                          size="md"
-                          shape="semi-rounded"
-                          placeholder="65"
-                          value={ageMax}
-                          onChange={(e) => setAgeMax(e.target.value)}
-                          helpText="Maximum: 65"
-                        />
-                      </div>
-                    </div>
+                        {/* Interests */}
+                        <div className="flex flex-col gap-50">
+                          <Label label="Interests" variant="supporting-medium" />
+                          <DropdownMenu>
+                            <DropdownMenuChevronTrigger variant="form">
+                              {selectedInterests.length === 0
+                                ? "Select interests"
+                                : selectedInterests.length === 1
+                                ? selectedInterests[0]
+                                : `${selectedInterests.length} selected`}
+                            </DropdownMenuChevronTrigger>
+                            <DropdownMenuContent width={260}>
+                              {INTERESTS.map((interest) => (
+                                <DropdownMenuCheckboxItem
+                                  key={interest}
+                                  checked={selectedInterests.includes(interest)}
+                                  onCheckedChange={() => toggleInterest(interest)}
+                                >
+                                  {interest}
+                                </DropdownMenuCheckboxItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
 
-                    {/* Interests */}
-                    <div className="flex flex-col gap-100">
-                      <SectionHeader
-                        label="Interests"
-                        subText="Target people based on what they care about"
-                      />
-                      <div className="flex flex-col rounded-100 border border-border-color-level2 overflow-hidden">
-                        {INTERESTS.map((interest) => (
-                          <CheckboxRow
-                            key={interest}
-                            label={interest}
-                            checked={selectedInterests.includes(interest)}
-                            onChange={() => toggleInterest(interest)}
-                            position="end"
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Behaviors */}
-                    <div className="flex flex-col gap-100">
-                      <SectionHeader
-                        label="Behaviors"
-                        subText="Reach people based on their actions"
-                      />
-                      <div className="flex flex-col rounded-100 border border-border-color-level2 overflow-hidden">
-                        {BEHAVIORS.map((behavior) => (
-                          <CheckboxRow
-                            key={behavior}
-                            label={behavior}
-                            checked={selectedBehaviors.includes(behavior)}
-                            onChange={() => toggleBehavior(behavior)}
-                            position="end"
-                          />
-                        ))}
+                        {/* Behaviors */}
+                        <div className="flex flex-col gap-50">
+                          <Label label="Behaviors" variant="supporting-medium" />
+                          <DropdownMenu>
+                            <DropdownMenuChevronTrigger variant="form">
+                              {selectedBehaviors.length === 0
+                                ? "Select behaviors"
+                                : selectedBehaviors.length === 1
+                                ? selectedBehaviors[0]
+                                : `${selectedBehaviors.length} selected`}
+                            </DropdownMenuChevronTrigger>
+                            <DropdownMenuContent width={260}>
+                              {BEHAVIORS.map((behavior) => (
+                                <DropdownMenuCheckboxItem
+                                  key={behavior}
+                                  checked={selectedBehaviors.includes(behavior)}
+                                  onCheckedChange={() => toggleBehavior(behavior)}
+                                >
+                                  {behavior}
+                                </DropdownMenuCheckboxItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -346,98 +374,111 @@ export default function AdSetBuilderPage() {
                   subText="Set your spend and run dates"
                   leadingIcon={IconWallet}
                 >
-                  <div className="flex flex-col gap-200 pt-100">
+                  <div className="flex flex-col gap-300 pt-100">
 
-                    {/* Budget */}
-                    <div className="flex flex-col gap-100">
+                    {/* Budget — SP5: gap-200 between SectionHeader and fields */}
+                    <div className="flex flex-col gap-200">
                       <SectionHeader label="Budget" subText="How much you want to spend" />
 
-                      <div className="flex flex-col gap-50">
-                        <Label label="Budget type" variant="supporting-medium" />
-                        <DropdownMenu>
-                          <DropdownMenuChevronTrigger>
-                            {budgetType}
-                          </DropdownMenuChevronTrigger>
-                          <DropdownMenuContent width={200}>
-                            <DropdownMenuRadioGroup value={budgetType} onValueChange={setBudgetType}>
-                              {DATE_RANGES_BUDGET.map((b) => (
-                                <DropdownMenuRadioItem key={b} value={b}>{b}</DropdownMenuRadioItem>
-                              ))}
-                            </DropdownMenuRadioGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                      {/* SP3: gap-150 between peer field groups within Budget */}
+                      <div className="flex flex-col gap-150">
 
-                      <Input
-                        label={`${budgetType} budget (₹)`}
-                        required
-                        size="md"
-                        shape="semi-rounded"
-                        placeholder={budgetType === "Daily" ? "e.g. 1000" : "e.g. 30000"}
-                        value={budgetAmount}
-                        onChange={(e) => setBudgetAmount(e.target.value)}
-                        helpText={
-                          budgetType === "Daily"
-                            ? "Minimum daily budget: ₹100"
-                            : "Minimum lifetime budget: ₹1,000"
-                        }
-                      />
+                        {/* Budget type + amount — compound field, grouped horizontally */}
+                        <div className="grid grid-cols-2 gap-100">
+                          <div className="flex flex-col gap-50">
+                            <Label label="Budget type" variant="supporting-medium" />
+                            <DropdownMenu>
+                              <DropdownMenuChevronTrigger variant="form">
+                                {budgetType}
+                              </DropdownMenuChevronTrigger>
+                              <DropdownMenuContent width={200}>
+                                <DropdownMenuRadioGroup value={budgetType} onValueChange={setBudgetType}>
+                                  {DATE_RANGES_BUDGET.map((b) => (
+                                    <DropdownMenuRadioItem key={b} value={b}>{b}</DropdownMenuRadioItem>
+                                  ))}
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                          <Input
+                            label={`${budgetType} budget (₹)`}
+                            labelVariant="supporting-medium"
+                            required
+                            size="md"
+                            shape="semi-rounded"
+                            placeholder={budgetType === "Daily" ? "e.g. 1000" : "e.g. 30000"}
+                            value={budgetAmount}
+                            onChange={(e) => setBudgetAmount(e.target.value)}
+                            helpText={
+                              budgetType === "Daily"
+                                ? "Minimum daily budget: ₹100"
+                                : "Minimum lifetime budget: ₹1,000"
+                            }
+                          />
+                        </div>
 
-                      {/* Bidding */}
-                      <div className="flex flex-col gap-50">
-                        <Label
-                          label="Bidding strategy"
-                          variant="supporting-medium"
-                          tooltip
-                          tooltipContent="How you want to bid for your results"
-                        />
-                        <DropdownMenu>
-                          <DropdownMenuChevronTrigger>
-                            {biddingStrategy}
-                          </DropdownMenuChevronTrigger>
-                          <DropdownMenuContent width={300}>
-                            <DropdownMenuRadioGroup value={biddingStrategy} onValueChange={setBiddingStrategy}>
-                              {BIDDING_STRATEGIES.map((s) => (
-                                <DropdownMenuRadioItem key={s} value={s}>{s}</DropdownMenuRadioItem>
-                              ))}
-                            </DropdownMenuRadioGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        {/* Bidding strategy — peer field within Budget group */}
+                        <div className="flex flex-col gap-50">
+                          <Label
+                            label="Bidding strategy"
+                            variant="supporting-medium"
+                            tooltip
+                            tooltipContent="How you want to bid for your results"
+                          />
+                          <DropdownMenu>
+                            <DropdownMenuChevronTrigger variant="form">
+                              {biddingStrategy}
+                            </DropdownMenuChevronTrigger>
+                            <DropdownMenuContent width={300}>
+                              <DropdownMenuRadioGroup value={biddingStrategy} onValueChange={setBiddingStrategy}>
+                                {BIDDING_STRATEGIES.map((s) => (
+                                  <DropdownMenuRadioItem key={s} value={s}>{s}</DropdownMenuRadioItem>
+                                ))}
+                              </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Schedule */}
-                    <div className="flex flex-col gap-100">
+                    {/* Schedule — SP5: gap-200 between SectionHeader and fields */}
+                    <div className="flex flex-col gap-200">
                       <SectionHeader label="Schedule" subText="When your ads will run" />
 
-                      {/* Start + End date — compact related pair, grouped horizontally per UX10/UX-AP2 */}
-                      <div className="grid grid-cols-2 gap-100">
-                        <Input
-                          label="Start date"
-                          size="md"
-                          shape="semi-rounded"
-                          placeholder="DD/MM/YYYY"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                        />
-                        <Input
-                          label="End date"
-                          size="md"
-                          shape="semi-rounded"
-                          placeholder="DD/MM/YYYY"
-                          value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                          disabled={noEndDate}
+                      {/* SP3: gap-200 between date grid and toggle — toggle is a peer component */}
+                      <div className="flex flex-col gap-200">
+
+                        {/* Start + End date — compact related pair, grouped horizontally */}
+                        <div className="grid grid-cols-2 gap-100">
+                          <Input
+                            label="Start date"
+                            labelVariant="supporting-medium"
+                            size="md"
+                            shape="semi-rounded"
+                            placeholder="DD/MM/YYYY"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                          />
+                          <Input
+                            label="End date"
+                            labelVariant="supporting-medium"
+                            size="md"
+                            shape="semi-rounded"
+                            placeholder="DD/MM/YYYY"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            disabled={noEndDate}
+                          />
+                        </div>
+
+                        <ToggleRow
+                          label="No end date"
+                          subText="Your ad set will run continuously until paused"
+                          checked={noEndDate}
+                          onChange={setNoEndDate}
+                          padding="none"
                         />
                       </div>
-
-                      <ToggleRow
-                        label="No end date"
-                        subText="Your ad set will run continuously until paused"
-                        checked={noEndDate}
-                        onChange={setNoEndDate}
-                        padding="none"
-                      />
                     </div>
                   </div>
                 </AccordionItem>
@@ -449,7 +490,7 @@ export default function AdSetBuilderPage() {
                   subText="Choose where your ads will appear"
                   leadingIcon={IconDevices}
                 >
-                  <div className="flex flex-col gap-200 pt-100">
+                  <div className="flex flex-col gap-300 pt-100">
 
                     <ToggleRow
                       label="Use automatic placements"
@@ -461,7 +502,7 @@ export default function AdSetBuilderPage() {
 
                     {/* Manual placements — shown only when auto is off */}
                     {!autoPlacement && (
-                      <div className="flex flex-col gap-100">
+                      <div className="flex flex-col gap-200">
                         <SectionHeader
                           label="Manual placements"
                           subText="Select where you want your ads to appear"

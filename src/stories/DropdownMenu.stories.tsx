@@ -55,12 +55,12 @@ type Story = StoryObj;
 
 // ── Chevron Trigger Sizes ──────────────────────────────────────────────────────
 
-/** md (default) vs sm chevron trigger sizes */
+/** md (40px) vs sm (36px) — fixed heights match Input size scale */
 export const ChevronTriggerSizes: Story = {
   render: () => (
     <div className="flex flex-col gap-300">
       <div className="flex flex-col gap-100">
-        <p className="text-supporting text-text-level3">md (default) — py-125 / 10px · chevron 20px</p>
+        <p className="text-supporting text-text-level3">md — h-[40px] · matches Input md</p>
         <DropdownMenu>
           <DropdownMenuChevronTrigger size="md">Select an option</DropdownMenuChevronTrigger>
           <DropdownMenuContent>
@@ -71,7 +71,7 @@ export const ChevronTriggerSizes: Story = {
         </DropdownMenu>
       </div>
       <div className="flex flex-col gap-100">
-        <p className="text-supporting text-text-level3">sm — py-100 / 8px · chevron 16px</p>
+        <p className="text-supporting text-text-level3">sm — h-[36px] · matches Input sm</p>
         <DropdownMenu>
           <DropdownMenuChevronTrigger size="sm">Select an option</DropdownMenuChevronTrigger>
           <DropdownMenuContent>
@@ -79,6 +79,44 @@ export const ChevronTriggerSizes: Story = {
             <DropdownMenuItem>Activity</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
           </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  ),
+};
+
+// ── Chevron Trigger Variants ───────────────────────────────────────────────────
+
+/** "default" vs "form" — use "form" inside form layouts alongside Input fields */
+export const ChevronTriggerVariants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-300 w-[280px]">
+      <div className="flex flex-col gap-100">
+        <p className="text-supporting text-text-level3">default — border-color-level2 · rounded-[5px]</p>
+        <DropdownMenu>
+          <DropdownMenuChevronTrigger variant="default">Select an option</DropdownMenuChevronTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Overview</DropdownMenuItem>
+            <DropdownMenuItem>Activity</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="flex flex-col gap-100">
+        <p className="text-supporting text-text-level3">form — ring-inset border-color-level3 · rounded-100 · use alongside Input fields</p>
+        <DropdownMenu>
+          <DropdownMenuChevronTrigger variant="form">Select an option</DropdownMenuChevronTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Overview</DropdownMenuItem>
+            <DropdownMenuItem>Activity</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="flex flex-col gap-100">
+        <p className="text-supporting text-text-level3">form — alongside an Input field</p>
+        <DropdownMenu>
+          <DropdownMenuChevronTrigger variant="form">Budget type</DropdownMenuChevronTrigger>
         </DropdownMenu>
       </div>
     </div>

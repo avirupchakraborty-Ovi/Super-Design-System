@@ -16,7 +16,7 @@ export const DropdownMenuTrigger = Radix.Trigger;
 export const DropdownMenuRadioGroup = Radix.RadioGroup;
 
 // ── Chevron Trigger ────────────────────────────────────────────────────────────
-// Note: cornerRadius 5px from Figma — no token exists, using rounded-[5px] (hardcoded)
+// Fixed heights match Input size scale: sm=36px, md=40px (no height tokens exist for these values)
 
 export type DropdownMenuChevronTriggerSize = "md" | "sm";
 
@@ -24,32 +24,44 @@ export interface DropdownMenuChevronTriggerProps {
   children: ReactNode;
   /** Optional leading icon */
   icon?: TablerIcon;
-  /** Size variant — md: 10px vertical padding (default), sm: 8px vertical padding */
+  /** Size variant — md: 40px height (default), sm: 36px height */
   size?: DropdownMenuChevronTriggerSize;
+  /**
+   * Visual variant:
+   * - "default" — lighter border (border-color-level2), 5px radius. For standalone dropdowns outside form layouts.
+   * - "form"    — Input-aligned: ring-inset, border-color-level3, rounded-100. MUST be used inside form layouts alongside Input fields.
+   */
+  variant?: "default" | "form";
   className?: string;
 }
 
 const chevronTriggerSizeStyles: Record<DropdownMenuChevronTriggerSize, string> = {
-  md: "px-150 py-125",
-  sm: "px-150 py-100",
+  md: "h-[40px] px-150",
+  sm: "h-[36px] px-150",
+};
+
+// "default": cornerRadius 5px from Figma — no token exists, using rounded-[5px] (hardcoded)
+const chevronTriggerVariantStyles: Record<"default" | "form", string> = {
+  default: "rounded-[5px] border border-border-color-level2 data-[state=open]:border-border-color-level3",
+  form:    "rounded-100 ring-1 ring-inset ring-border-color-level3 data-[state=open]:ring-2 data-[state=open]:ring-border-color-primary",
 };
 
 export function DropdownMenuChevronTrigger({
   children,
   icon,
   size = "md",
+  variant = "default",
   className,
 }: DropdownMenuChevronTriggerProps) {
   return (
     <Radix.Trigger
       className={cn(
         "group inline-flex w-full items-center gap-100",
-        // cornerRadius 5px from Figma — no token exists, using rounded-[5px] (hardcoded)
-        "rounded-[5px]",
         chevronTriggerSizeStyles[size],
-        "bg-surface-level1 border border-border-color-level2",
+        chevronTriggerVariantStyles[variant],
+        "bg-surface-level1",
         "text-body text-text-level1 text-left cursor-pointer outline-none select-none",
-        "data-[state=open]:border-border-color-level3 data-[state=open]:bg-surface-level1-hover",
+        "data-[state=open]:bg-surface-level1-hover",
         className,
       )}
     >

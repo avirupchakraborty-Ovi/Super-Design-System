@@ -1,6 +1,19 @@
 # LAYOUT.md
 ## Super Design System — Layout Constraint Rules
-`Version 1.2 | Priority: Highest | Overrides: All other files`
+`Version 1.9 | Priority: Highest | Overrides: All other files`
+
+---
+
+### System Priority
+
+LAYOUT.md has highest priority.
+
+No rule from:
+- PATTERNS.md
+- COMPONENT_MAP.md
+- UX_RULES.md
+
+may override layout constraints.
 
 ---
 
@@ -21,6 +34,7 @@
 - How components are composed, ordered, or populated → PATTERNS.md
 - Typography tokens, font sizes, or text styling → COMPONENT_MAP.md
 - Content density thresholds and pagination rules → PATTERNS.md
+- UX grouping, density optimization, and usability → UX_RULES.md
 - Visual styling, color, or theming
 - Component-internal spacing
 - Content, copy, icons, or labels
@@ -45,29 +59,30 @@ A screen MUST use exactly one shell type. Mixing shell types within the same scr
 
 **S4.** The content area background MUST use either `bg-surface-level1` or `bg-surface-level2`. The choice is determined by the screen design — do not default to either without explicit specification.
 
-**S5.** The sidebar background MUST use `bg-surface-level1`.
-
-**S6.** Scroll behavior:
+**S5.** Scroll behavior:
 - The content area MUST be vertically scrollable.
 - Sidebar scroll behavior depends on configuration:
   - Fixed sidebar → MUST NOT scroll with the content area
   - Scrollable sidebar → MUST scroll independently of the content area
 
-**S7.** The content area MUST have `px-400` (32px) horizontal padding at Desktop and Wide breakpoints.
+**S6.** The content area MUST have `px-400` (32px) horizontal padding at Desktop and Wide breakpoints.
 
-**S8.** The content area MUST have `pt-400` (32px) top padding.
+**S7.** The content area MUST have `pt-400` (32px) top padding. Applies at all breakpoints. No responsive variation defined.
 
-**S9.** Horizontal scrolling at the page shell level is PROHIBITED at all breakpoints.
+**S8.** Horizontal scrolling at the page shell level is PROHIBITED at all breakpoints.
 
-**S10.** Three layout types are permitted within the content area:
+*(S9 removed — numbering preserved from S10 onward to maintain external citations)*
+
+**S10.** Four layout types are permitted within the content area:
 
 | Type | Rule |
 |------|------|
 | `full-stretch` | Content fills the full available width. No max-width applied. |
 | `centered` | Content MUST use `var(--layout-content-max-width)` as its max-width constraint and MUST be horizontally centered. Hardcoded pixel values MUST NOT be specified alongside this token. |
 | `aside-panel` | The combined layout (main column + aside panel) is centered as a unit within the content area using `w-fit mx-auto` on the outer wrapper — this shrinks the container to the natural width of its children so auto margins can distribute equally on both sides. The main content column uses `w-[var(--layout-content-max-width)] min-w-0` — a fixed width set by the content max-width token. A secondary panel sits to the right at a fixed width declared as an SP8 approved exception with an inline comment. The aside panel MUST be hidden below the `xl` breakpoint. See S12 for full structural rules. |
+| `proportional-split` | Equal-width two-column split using `grid grid-cols-2`. Permitted only in creation and editing flows where a real-time live preview is required alongside the form. PROHIBITED on data display screens, dashboards, and settings screens. See S14 for full rules. |
 
-**S11.** The layout type for a screen MUST be declared once and applied uniformly. A screen MUST NOT mix `full-stretch`, `centered`, and `aside-panel` for its primary content sections.
+**S11.** The layout type for a screen MUST be declared once and applied uniformly. A screen MUST NOT mix `full-stretch`, `centered`, `aside-panel`, or `proportional-split` for its primary content sections.
 
 **S12.** Aside-panel layout structure:
 - Outer wrapper: `flex gap-300 w-fit mx-auto` or `flex gap-400 w-fit mx-auto` — `w-fit` shrinks the container to the natural width of its children so that `mx-auto` can distribute remaining space equally on both sides, centering the combined layout as a unit
@@ -78,12 +93,13 @@ A screen MUST use exactly one shell type. Mixing shell types within the same scr
 - The aside panel is supplementary content — it MUST NOT contain the primary content of the screen
 - Aside width MUST be consistent across all aside panels on the same screen — varying widths on a single screen are PROHIBITED
 
-**S14.** Page header content alignment by layout type:
+**S13.** Page header content alignment by layout type:
 - `full-stretch`: Page header inner content spans the full content area width. No constraint applied.
 - `centered`: Page header inner content MUST be constrained to `var(--layout-content-max-width)` with `mx-auto`, so the heading and CTAs align with the content below.
-- `aside-panel`: The page header inner content MUST mirror the column structure of the content block below. The inner wrapper uses `flex gap-300 w-fit mx-auto` — inside it, the heading occupies a div of `w-[var(--layout-content-max-width)] min-w-0` matching the main column width, and the CTAs occupy a div at the same fixed width as the aside panel declared as an SP8 exception with an inline comment, right-aligned via `justify-end`. This ensures the heading left-aligns with the main column and the CTAs right-align with the aside panel edge.
+- `aside-panel`: The page header inner content MUST mirror the column structure of the content block below. The inner wrapper uses `flex gap-300 w-fit mx-auto` — inside it, the heading occupies a div of `w-[var(--layout-content-max-width)] min-w-0` matching the main column width, and the CTAs occupy a div at the same fixed width as the aside panel declared as an SP8 exception with an inline comment, using `flex-none flex items-center justify-end gap-100`. This ensures the heading left-aligns with the main column and the CTAs right-align with the aside panel edge.
+- `proportional-split`: Page header spans the full content area width, same as `full-stretch`. No column mirroring or max-width constraint applied.
 
-**S13.** Proportional split layout (creation flows with live preview only):
+**S14.** Proportional split layout (creation flows with live preview only):
 - Permitted only in creation and editing flows where a real-time live preview is required alongside the form
 - Structure: `grid grid-cols-2` at Desktop and Wide — both columns equal width (satisfies G4 and G7)
 - At Tablet and Mobile: collapse to 1-column — form column visible, preview column hidden
@@ -105,7 +121,7 @@ A screen MUST use exactly one shell type. Mixing shell types within the same scr
 
 **G6.** A 3-column grid MUST be declared as `grid grid-cols-3`. It MUST NOT be simulated with flex and hardcoded widths.
 
-**G7.** A 2-column content grid MUST be declared as `grid grid-cols-2`. It MUST NOT be simulated with flex and hardcoded widths. Exception: aside-panel layouts (defined in S10) MUST use `flex` — the main column uses `flex-1`, the aside uses its fixed declared width. This is the only permitted use of `flex` for a 2-column page-level layout.
+**G7.** A 2-column content grid MUST be declared as `grid grid-cols-2`. It MUST NOT be simulated with flex and hardcoded widths. Exception (a): aside-panel layouts (defined in S10) MUST use `flex` — the main column uses `w-[var(--layout-content-max-width)] min-w-0`, the aside uses its fixed declared width (SP8 approved exception). Exception (b): Pattern 6 Split View (full-stretch layout) MUST use `flex w-full` — the list panel uses a fixed width declared as an SP8 approved exception, the detail panel uses `flex-1 min-w-0`. These are the only two permitted uses of `flex` for 2-column page-level layouts.
 
 **G8.** A 1-column layout MUST use `w-full` on its child. It MUST NOT use a grid wrapper with `grid-cols-1`.
 
@@ -128,7 +144,7 @@ Nested grids MUST NOT create competing layout hierarchies.
 
 **SP2.** Spacing between top-level sections within the content area MUST be `gap-400` (32px).
 
-**SP3.** Spacing between components within a section MUST be `gap-200` (16px).
+**SP3.** Spacing between components within a section MUST be a minimum of `gap-150` (12px). `gap-200` (16px) is the standard value. `gap-300` (24px) is permitted when greater visual separation between distinct sub-sections is required.
 
 **SP4.** Spacing between elements within a single component MUST be `gap-100` (8px) or less.
 
@@ -153,7 +169,7 @@ Nested grids MUST NOT create competing layout hierarchies.
 
 **CC3.** Data table components MUST be full-width (`w-full`). They MUST NOT be placed inside a multi-column grid.
 
-**CC4.** Banner components (Nudge, PromoBanner, HeroBanner, Alert) MUST be full-width. They MUST NOT be placed inside a multi-column grid.
+**CC4.** Banner components (Nudge, PromoBanner, Alert) MUST be full-width. They MUST NOT be placed inside a multi-column grid.
 
 **CC5.** All interactive elements MUST have a minimum touch target of 32×32px.
 
@@ -197,7 +213,7 @@ Nested grids MUST NOT create competing layout hierarchies.
 | Desktop | `px-400` (32px) |
 | Wide | `px-400` (32px) |
 
-**R7.** Horizontal scrolling is PROHIBITED at the page level at all breakpoints.
+**R7.** Horizontal scrolling is PROHIBITED at the page level at all breakpoints — see S8.
 
 **R8.** Explicit horizontal scroll containers MUST use `overflow-x-auto`. Using `overflow-x-scroll` is PROHIBITED.
 
@@ -241,7 +257,7 @@ In all other cases, components MAY use intrinsic height.
 
 **SC3.** Filter controls and sort controls MUST be placed above the content they affect. Placing them below or beside content is PROHIBITED.
 
-**SC4.** Section-level action buttons MUST be right-aligned within the section header row. Left-aligned or centered section actions are PROHIBITED.
+**SC4.** Section-level and form-level action buttons MUST be right-aligned within their container row. Left-aligned or centered section or form actions are PROHIBITED.
 
 **SC5.** Section header structure MUST follow this exact pattern:
 `[Heading + optional subtext — left]` `[optional actions — right]`
@@ -325,7 +341,7 @@ Placing any banner mid-content without a clear contextual anchor is PROHIBITED.
 
 | Priority | Layer | Scope |
 |----------|-------|-------|
-| 1 | Component constraints (Section 5) | Overrides all other rules |
+| 1 | Component constraints (Section 5) | Overrides all other layout rules within this file |
 | 2 | Container constraints (Section 2) | Overrides grid, spacing, visual |
 | 3 | Grid system (Section 3) | Overrides spacing and visual |
 | 4 | Spacing system (Section 4) | Overrides visual preference only |

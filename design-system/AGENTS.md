@@ -6,6 +6,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
+`Version 1.2 | Core execution rules for screen generation`
+
 # Design System Rules
 
 These rules apply to every component in `src/components/ui/`. They exist to keep the codebase clean, consistent, and scalable for handoff to developers.
@@ -22,6 +24,7 @@ text-text-level3      helper / supporting text
 text-text-level4      placeholder / muted text
 text-text-inverted    white text on dark backgrounds
 text-text-critical-3  error state text and labels
+text-text-brand-primary brand links, active indicators, CTA labels on light bg
 ```
 ❌ Never: `text-gray-900`, `text-gray-400`, `text-critical-600`
 
@@ -67,15 +70,17 @@ If a token is missing, flag it — don't invent a workaround.
 
 ## Screen Generation Protocol
 
+> Phase 1 — Planning. Run this BEFORE writing any code.
+
 Before building any new screen, Claude MUST follow this sequence — no exceptions:
 
 1. **Identify the primary intent** of the screen using DS7 (COMPONENT_MAP.md):
-   - Is the screen primarily displaying data, enabling a user action, collecting input,
-     delivering a message, or presenting an overlay?
+   - Is the screen's primary intent Data display, User action, Selection input, Messaging, or Overlay?
    - The dominant intent category determines the correct pattern direction.
+   - Intent categories map directly to patterns — use P1–P11 in PATTERNS.md to confirm the match.
 
 2. **Select the layout type** based on the screen's structure (LAYOUT.md S10):
-   - `full-stretch`, `centered`, or `aside-panel`
+   - `full-stretch`, `centered`, `aside-panel`, or `proportional-split` (only for creation/editing flows requiring real-time live preview — see LAYOUT.md S14)
 
 3. **Select the pattern** that matches the primary intent (PATTERNS.md P1–P11):
    - Use the Pattern Selection Decision Rules (P1–P11) to confirm the choice.
@@ -88,3 +93,78 @@ Before building any new screen, Claude MUST follow this sequence — no exceptio
 
 This protocol applies to every new screen prompt, regardless of how detailed
 or brief the request is.
+
+---
+
+### Execution Order
+
+> Phase 2 — Build. Run this AFTER user confirms intent, layout, and pattern.
+
+After pattern selection is confirmed, Claude MUST follow this sequence:
+
+1. Determine structure using PATTERNS.md
+2. Apply layout constraints using LAYOUT.md
+3. Select components using COMPONENT_MAP.md
+4. Apply UX_RULES.md — make UX decisions:
+   - determine grouping and field arrangement
+   - optimize layout efficiency
+   - reduce cognitive load
+5. Validate those decisions against UX_RULES.md Section 11 checks
+
+6. Validation outcomes:
+
+   Each UX check must result in one of the following:
+
+   - **PASS** → rule satisfied
+   - **FAIL** → rule violated and fixable within system constraints
+   - **CONSTRAINED PASS** → rule not fully satisfied due to a higher-priority rule (LAYOUT.md, COMPONENT_MAP.md, or PATTERNS.md). When the blocking rule is from LAYOUT.md, identify which internal tier caused the constraint (per LAYOUT.md Section 12). If a lower-tier layout rule is the blocker, explore whether UX can still be optimized before declaring CONSTRAINED PASS.
+   - **DENSITY FLAG** → a slot's content count exceeds its hard maximum as defined in PATTERNS.md density rules. Cannot be resolved by Claude — requires a content or scope decision from the user.
+
+   **Enforcement logic:**
+
+   - If any check = FAIL:
+     → Claude MUST revise the output — layout, component selection,
+       or grouping as appropriate
+     → Re-run validation
+     → Repeat until all FAIL states are resolved
+     → If a FAIL cannot be resolved within system constraints,
+       reclassify as CONSTRAINED PASS and follow that protocol
+
+   - If checks result in PASS or CONSTRAINED PASS only (and no DENSITY FLAG):
+     → Claude MAY proceed to output
+
+   - If any check = DENSITY FLAG:
+     → Claude MUST NOT generate output
+     → Claude MUST state: which slot exceeded its threshold, the current count, the hard maximum, and the specific recommended alternative from PATTERNS.md
+     → Claude MUST wait for explicit user instruction before proceeding
+     → The user decides whether to reduce content, accept the overflow, or update the threshold in PATTERNS.md
+
+   **For CONSTRAINED PASS:**
+
+   Claude MUST:
+   - Identify which higher-priority rule caused the constraint
+   - Explain why UX could not be fully optimized
+   - Confirm that the current solution is the best possible within constraints
+   - Surface this to the user before generating output
+   - The user decides whether to accept the constraint or update the rule
+     in the relevant MD file that caused it — either by adding an exception
+     or modifying the constraint directly
+
+7. Generate output
+
+---
+
+### Conflict Resolution Priority
+
+If rules conflict:
+
+1. LAYOUT.md
+2. COMPONENT_MAP.md
+3. PATTERNS.md
+4. UX_RULES.md
+
+Lower priority rules MUST NOT override higher priority rules.
+
+If conflicts arise, Claude MUST surface them instead of silently degrading UX.
+
+When the conflict is entirely within LAYOUT.md, apply the internal priority system in LAYOUT.md Section 12 to resolve it.

@@ -1,5 +1,5 @@
 # UX_RULES.md
-`Version 1.2 | Priority: Fourth — see AGENTS.md for full priority chain`
+`Version 1.3 | Priority: Fourth — see AGENTS.md for full priority chain`
 
 This file defines UX decision rules, anti-patterns, and validation logic.
 
@@ -384,6 +384,30 @@ Excessive scrolling → MUST optimize
 
 ---
 
+### UX-AP8. Uncollapsed Long Selection Lists
+
+Displaying a full visible checklist for a selection group with more than 3 options increases scroll length without improving decision quality.
+
+When a selection group contains more than 3 options, PREFER a collapsed selection pattern:
+- Present the control in a closed state that expands on interaction
+- The closed state MUST show a placeholder or a summary of the current selection
+
+Exception: when the user MUST compare all options simultaneously to make a decision, a full visible list is acceptable.
+
+Component selection for the collapsed selection pattern MUST follow COMPONENT_MAP.md.
+
+---
+
+### UX-AP9. Inconsistent Selection Patterns
+
+Semantically equivalent selection controls within the same section or screen MUST use the same interaction pattern.
+
+Do NOT:
+- use a collapsed pattern for one control and a full checklist for a semantically equivalent control in the same view
+- introduce a new pattern for one field without applying it to all equivalent fields in the same context
+
+---
+
 ## SECTION 11 — PRE-DELIVERY VALIDATION
 
 Before output, Claude MUST evaluate:
@@ -429,7 +453,31 @@ PASS if every component maps to a structural role (not decorative) and no raw HT
 
 ### UX-CHECK7. Overall quality
 Does UI feel intentional and structured?
-PASS if UX-AP1 through UX-AP7 all pass.
+PASS if UX-AP1 through UX-AP9 all pass.
+
+---
+
+### UX-CHECK8. Selection List Length
+
+Does any visible checklist or option list contain more than 3 items?
+PASS if all lists with 4+ items use a collapsed selection pattern, OR the full list is justified by a comparison requirement.
+FAIL if a 4+ item checklist is used where a collapsed pattern would reduce scroll without reducing usability.
+
+---
+
+### UX-CHECK9. Selection Pattern Consistency
+
+Do all semantically equivalent selection controls within the same section use the same pattern?
+PASS if all equivalent selection controls share the same interaction pattern.
+FAIL if one uses a collapsed pattern and an equivalent control uses a full checklist.
+
+---
+
+### UX-CHECK10. Related Selector Grouping
+
+When two or more selection controls are semantically coupled (e.g. targeting dimensions, attribute pairs), is horizontal grouping applied?
+PASS if coupled selectors satisfy the compact definition in UX10 and are grouped horizontally.
+FAIL if coupled compact selectors are stacked vertically without justification.
 
 ---
 

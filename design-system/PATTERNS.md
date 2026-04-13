@@ -1,6 +1,6 @@
 # PATTERNS.md
 ## Super Design System — Screen Composition Rules
-`Version 1.0 | Depends on: LAYOUT.md, COMPONENT_MAP.md | Priority: Third`
+`Version 1.5 | Depends on: LAYOUT.md, COMPONENT_MAP.md | Priority: Third — see AGENTS.md for full priority chain`
 
 ---
 
@@ -23,6 +23,7 @@
 - Patterns MUST NOT override any rule in COMPONENT_MAP.md
 - Patterns MUST NOT define grid behavior, spacing values, or breakpoints
 - All component selection within patterns MUST follow DS1–DS7
+- Density, grouping, and usability MUST follow UX_RULES.md
 
 ---
 
@@ -41,19 +42,21 @@ The following slots appear in multiple patterns. Their definitions are canonical
   → Messaging
   → Overlay
 - Lower priority slots MUST NOT appear before higher priority slots
+- When a pattern's Behavior Rules define a specific slot ordering that differs from DS7 intent priority, the Behavior Rules take precedence within that pattern
+- [global-banner] and [section-banner] are messaging infrastructure slots — they are exempt from DS7 intent priority ordering and may appear outside the DS7 sequence at any position in the Slot Architecture
 
 ---
 
 ### [global-banner]
 - **Allowed:** `Alert`, `Nudge` (global type only)
 - **Do NOT Allow:** `PromoBanner`, `Nudge` (contextual type), any other component
-- **Constraints:** MUST appear before all other slots in the content area (per LAYOUT.md SC6). At most one `Alert` and one `Nudge` may appear simultaneously.
+- **Constraints:** MUST appear before all other slots in the content area (per LAYOUT.md SC6). At most one `Alert` and one `Nudge` may appear simultaneously. For `content-only` shell type (LAYOUT.md S1), global-banner MUST appear as the topmost element within the content area, before any [page-header] or section content — no shell navigation is present to serve as an anchor, the content area itself is the full viewport.
 - **Ordering:** `Alert` MUST precede `Nudge` when both are present.
 
 ### [page-header]
 - **Allowed:** Heading text, optional sub-text, `Button`, `IconButton`, `Badge`, `Tabs` (line variant only)
 - **Do NOT Allow:** `StatCard`, `Card`, `DataTable`, `Modal`, form controls
-- **Constraints:** MUST follow section header structure from LAYOUT.md SC5: `[Heading + optional subtext — left]` `[optional actions — right]`. Section-level action buttons MUST be right-aligned (per LAYOUT.md SC4). At most one `Button variant="primary"` or `variant="brand"` per page header. For `centered` layouts, the page header inner content MUST be constrained to `var(--layout-content-max-width)` with `mx-auto`. For `aside-panel` layouts, the page header inner content MUST mirror the column structure of the content block — heading in a `w-[var(--layout-content-max-width)] min-w-0` div, CTAs in a fixed-width div matching the aside panel width declared as an SP8 exception — both wrapped in `flex gap-300 w-fit mx-auto` (per LAYOUT.md S14).
+- **Constraints:** MUST follow section header structure from LAYOUT.md SC5: `[Heading + optional subtext — left]` `[optional actions — right]`. Section-level action buttons MUST be right-aligned (per LAYOUT.md SC4). At most one `Button variant="primary"` or `variant="brand"` per page header. For `centered` layouts, the page header inner content MUST be constrained to `var(--layout-content-max-width)` with `mx-auto`. For `aside-panel` layouts, the page header inner content MUST mirror the column structure of the content block below (per LAYOUT.md S13). Heading text MUST use `text-h2 font-semibold text-text-level1`. Sub-text (when present) MUST use `text-body font-normal text-text-level3`.
 
 ### [section-banner]
 - **Allowed:** `Nudge` (contextual type), `PromoBanner`
@@ -99,10 +102,10 @@ Provides an at-a-glance overview of key metrics, performance trends, recent acti
 - [global-banner]
 - [page-header]
 - [section-banner]
+- [quick-actions]
 - [metrics]
 - [primary-chart]
 - [activity]
-- [quick-actions]
 
 ---
 
@@ -111,35 +114,35 @@ Provides an at-a-glance overview of key metrics, performance trends, recent acti
 **[metrics]**
 - **Allowed:** `StatCard`, `ChartCard`
 - **Do NOT Allow:** `ChartFullWidth`, `DataTable`, `Card`, `ActionCard`
-- **Constraints:** Components MUST be arranged using a grid appropriate to the number of items (per LAYOUT.md grid rules). Column count MUST be determined by layout constraints, not pattern rules. MUST use `items-stretch` (per LAYOUT.md LB4). MUST NOT mix `StatCard` and `ChartCard` in the same grid instance. When 5 or 6 components are used, a 3-column grid MUST be used to keep the metrics section compact and prevent it from dominating the screen.
+- **Constraints:** Components MUST be arranged using a grid appropriate to the number of items (per LAYOUT.md grid rules). Column count MUST be determined by layout constraints, not pattern rules. MUST use `items-stretch` (per LAYOUT.md LB4). MUST NOT mix `StatCard` and `ChartCard` in the same grid instance.
 - **Ordering:** No prescribed order within the grid.
 
 **[primary-chart]**
 - **Allowed:** `ChartFullWidth`
 - **Do NOT Allow:** `ChartCard`, `StatCard`, any other component
-- **Constraints:** MUST be full-width. MUST be the sole component in this slot (per LAYOUT.md LB8). This slot is optional — omit entirely if no time-series analytics exist.
+- **Constraints:** Layout MUST follow LAYOUT.md. MUST be the sole component in this slot (per LAYOUT.md LB8). This slot is optional — omit entirely if no time-series analytics exist.
 
 **[activity]**
 - **Allowed:** `DataTable`, `TableList`
 - **Do NOT Allow:** `MenuList`, `Card`, `StatCard`
-- **Constraints:** MUST be full-width. Use `DataTable` when records require sort or filter. Use `TableList` when simple display with no controls is sufficient (per DS1).
+- **Constraints:** Layout MUST follow LAYOUT.md. Use `DataTable` when records require sort or filter. Use `TableList` when simple display with no controls is sufficient (per DS1).
 - **Ordering:** Precede with a [section-header].
 
 **[quick-actions]**
 - **Preferred:** `ActionCard`
 - **Alternative:** `Button` MAY be used as a fallback when `ActionCard` is not suitable
 - **Do NOT Allow:** `Card`, `MenuList`, any other component
-- **Constraints:** This slot is optional. SHOULD render at least 3 `ActionCard` components for visual balance. If fewer actions exist, MAY render available actions or fallback to `Button`-based actions. ActionCards MUST be placed in a grid.
+- **Constraints:** This slot is optional. If fewer actions exist, MAY render available actions or fallback to `Button`-based actions. Layout MUST follow LAYOUT.md.
 
 ---
 
 #### Content Density Rules
 
-- **[metrics]:** Minimum 2 components. Maximum 6 components. Grid configuration follows LAYOUT.md grid rules. If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8). When 5 or 6 components are used, a 3-column grid MUST be used.
+- **[metrics]:** Recommended 2–3 items. Hard maximum: 4 items. If the requested content exceeds 4, issue a DENSITY FLAG before generating output (see AGENTS.md). If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8). Grid configuration follows LAYOUT.md grid rules.
 - **[primary-chart]:** Exactly 1 `ChartFullWidth` or omit slot entirely.
 - **[activity]:** Show `EmptyState` when 0 records. Paginate when `DataTable` exceeds 10 rows. Paginate when `TableList` exceeds 20 rows.
 - **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
-- **[quick-actions]:** SHOULD render at least 3 `ActionCard` components for visual balance. Maximum 6. If fewer actions exist, MAY render available actions or fallback to `Button`-based actions.
+- **[quick-actions]:** Recommended 2–3 items. Hard maximum: 4 items. If the requested content exceeds 4, issue a DENSITY FLAG before generating output (see AGENTS.md). If fewer actions exist, MAY render available actions or fallback to `Button`-based actions.
 
 ---
 
@@ -192,23 +195,24 @@ Displays detailed performance trends and breakdowns for a single data domain (e.
 **[metric-summary]**
 - **Allowed:** `ChartCard`
 - **Do NOT Allow:** `StatCard`, `ChartFullWidth`, `DataTable`
-- **Constraints:** Components MUST be arranged using a grid appropriate to the number of items (per LAYOUT.md grid rules). Column count MUST be determined by layout constraints, not pattern rules. MUST use `items-stretch`.
+- **Constraints:** Components MUST be arranged using a grid appropriate to the number of items (per LAYOUT.md grid rules). Column count MUST be determined by layout constraints, not pattern rules. MUST use `items-stretch` for alignment.
 
 **[trend-chart]**
 - **Allowed:** `ChartFullWidth`
 - **Do NOT Allow:** `ChartCard`, `StatCard`, any other component
-- **Constraints:** MUST be full-width. MUST be the sole component in this slot (per LAYOUT.md LB8).
+- **Constraints:** Layout MUST follow LAYOUT.md. MUST be the sole component in this slot (per LAYOUT.md LB8).
 
 **[breakdown]**
 - **Allowed:** `DataTable`, `TableList`
 - **Do NOT Allow:** `Card`, `StatCard`, `ChartCard`
-- **Constraints:** MUST be full-width. Optional — omit if no breakdown data exists.
+- **Constraints:** Layout MUST follow LAYOUT.md. Optional — omit if no breakdown data exists.
 
 ---
 
 #### Content Density Rules
 
-- **[metric-summary]:** Minimum 2 `ChartCard` components. Maximum 4. Grid configuration follows LAYOUT.md grid rules.
+- **[metric-summary]:** Recommended 2–3 items. Hard maximum: 4 items. If the requested content exceeds 4, issue a DENSITY FLAG before generating output (see AGENTS.md). Grid configuration follows LAYOUT.md grid rules.
+- **[metric-summary] (single card):** If only 1 ChartCard exists, render it full-width without a grid wrapper (per LAYOUT.md LB8). The 2-or-3-column grid requirement applies only when 2 or more ChartCards are present.
 - **[trend-chart]:** Exactly 1 `ChartFullWidth`.
 - **[breakdown]:** Show `EmptyState` when 0 records. Paginate when `DataTable` exceeds 10 rows.
 - **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
@@ -261,14 +265,14 @@ Displays a browsable, filterable, and optionally sortable set of data records. T
 #### Slot Definitions
 
 **[filter-bar]**
-- **Allowed:** `Tabs` (pill or line variant), `Button` (filter/sort controls), `DropdownMenu`, `Input` (search)
+- **Allowed:** `Tabs` (`pill` variant only), `Button` (filter/sort controls), `DropdownMenu`, `Input` (search)
 - **Do NOT Allow:** `StatCard`, `Card`, `DataTable`, `MenuList`
 - **Constraints:** MUST appear above [content] (per LAYOUT.md SC3). `Tabs` in this slot MUST span full container width (per LAYOUT.md SC8).
 
 **[content]**
 - **Allowed:** `DataTable`, `TableList`
 - **Do NOT Allow:** `Card`, `StatCard`, `MenuList`, `Accordion`
-- **Constraints:** MUST be full-width. Use `DataTable` when records require sort, filter, or bulk action. Use `TableList` when display-only (per DS1).
+- **Constraints:** Layout MUST follow LAYOUT.md. Use `DataTable` when records require sort, filter, or bulk action. Use `TableList` when display-only (per DS1).
 
 **[pagination]**
 - **Allowed:** `Pagination`
@@ -279,7 +283,7 @@ Displays a browsable, filterable, and optionally sortable set of data records. T
 
 #### Content Density Rules
 
-- **[filter-bar] tabs:** Minimum 2 tabs. Maximum 6 tabs. If more than 6 filter states exist, use `DropdownMenu` for overflow — do not render more than 6 tabs.
+- **[filter-bar] tabs:** Recommended 3–5 tabs. Hard maximum: 7 tabs. If the requested tab count exceeds 7, issue a DENSITY FLAG before generating output — recommended alternative is to collapse overflow tabs into a `DropdownMenu` (see AGENTS.md).
 - **[content]:** Show `EmptyState` when 0 records. Show filtered-empty message inline when filters return 0 results without resetting the filter bar.
 - **[pagination]:** Render `Pagination` when `DataTable` exceeds 10 rows. Render `Pagination` when `TableList` exceeds 20 rows. Hide `Pagination` when only 1 page exists.
 - **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
@@ -320,6 +324,7 @@ Collects user input across one or more fields and submits it as a complete data 
 
 #### Slot Architecture
 
+- [global-banner]
 - [page-header]
 - [section-banner]
 - [form-section] *(repeatable)*
@@ -333,26 +338,26 @@ Collects user input across one or more fields and submits it as a complete data 
 **[form-section]**
 - **Allowed:** `Input`, `PhoneInput`, `DropdownMenu`, `Checkbox`, `CheckboxRow`, `Toggle`, `ToggleRow`, `Label`, `Badge`, `SectionHeader`
 - **Do NOT Allow:** `DataTable`, `StatCard`, `Card`, `ChartCard`, `Modal`
-- **Constraints:** Fields MUST be stacked vertically in a single column. Each field MUST use `w-full`. MUST NOT place form fields in a multi-column grid. Sub-sections within a form MUST use a sub-heading above the field group.
+- **Constraints:** Fields MUST follow a vertical flow by default. Field arrangement MUST be optimized: related compact fields SHOULD be grouped horizontally, complex fields SHOULD remain vertical. Each field MUST use `w-full`. Sub-sections within a form MUST use a sub-heading above the field group.
 
 **[media-upload]**
 - **Allowed:** `CoverImageUpload`
 - **Do NOT Allow:** Any other component
-- **Constraints:** This slot is optional. MUST only be included when a media asset is required. MUST be full-width. MUST be preceded by a Label.
+- **Constraints:** This slot is optional. MUST only be included when a media asset is required. Layout MUST follow LAYOUT.md. MUST be preceded by a Label.
 
 **[form-actions]**
 - **Allowed:** `Button`
 - **Do NOT Allow:** `IconButton`, `GradientButton`, any non-Button component
-- **Constraints:** MUST contain exactly 1 primary submit `Button` and 1 cancel/secondary `Button`. MUST NOT contain more than 2 action buttons. Buttons MUST be right-aligned (per LAYOUT.md SC4).
+- **Constraints:** MUST include a primary action `Button`. SHOULD include a secondary action `Button`. MAY include additional actions if needed. Buttons MUST be right-aligned (per LAYOUT.md SC4).
 
 ---
 
 #### Content Density Rules
 
-- **[form-section]:** Minimum 1 field. Maximum 8 fields per section. If more than 8 fields are needed, split into multiple [form-section] slots with distinct sub-headings.
-- **[form-section] (repeatable):** Maximum 4 form sections per page. If more sections are needed, use `Tabs` or `Accordion` to group them.
-- **Accordion in forms:** Minimum 2 `Accordion` items when used. Never use a single-item Accordion.
-- **[form-actions]:** Always exactly 2 buttons — 1 submit, 1 cancel. No exceptions.
+- **[form-section]:** Recommended 3–6 fields per sub-section. Hard maximum: 8 fields per sub-section. Fields count individually toward the sub-section maximum regardless of whether they are grouped horizontally. If the requested field count exceeds 8 in a single sub-section, issue a DENSITY FLAG before generating output — recommended alternative is to split into multiple [form-section] slots with distinct `SectionHeader` labels (see AGENTS.md).
+- **[form-section] (repeatable):** Section count SHOULD remain manageable. If more sections are needed, use `Tabs` or `Accordion` to group them.
+- **Accordion in forms:** Use multiple `Accordion` items to avoid single-item accordions.
+- **[form-actions]:** See Slot Definitions.
 
 ---
 
@@ -404,7 +409,7 @@ Displays all information about a single entity (product, post, contact, order) w
 **[summary]**
 - **Allowed:** `StatCard`, `FollowerCount`, `Badge`, `Thumbnail`
 - **Do NOT Allow:** `ChartCard`, `DataTable`, `Card`, `ActionCard`
-- **Constraints:** `StatCard` MUST be placed in a grid with `items-stretch`. `FollowerCount` and `Badge` MUST be inline elements — MUST NOT stretch full-width.
+- **Constraints:** Layout MUST follow LAYOUT.md. Use `items-stretch` for `StatCard` alignment. `FollowerCount` and `Badge` MUST be inline elements — MUST NOT stretch full-width.
 
 **[section-nav]**
 - **Allowed:** `Tabs` (line variant)
@@ -414,14 +419,14 @@ Displays all information about a single entity (product, post, contact, order) w
 **[section-content]**
 - **Allowed:** `DataTable`, `TableList`, `MenuList`, `ToggleRow`, `Card`, `StatCard`, `ChartCard`, `ChartFullWidth`, `EmptyState`
 - **Do NOT Allow:** Another [section-nav] nested within section content
-- **Constraints:** Content within this slot MUST follow the appropriate pattern for its data type. Full-width components (`DataTable`, `ChartFullWidth`) MUST NOT be placed in a multi-column grid.
+- **Constraints:** Content within this slot MUST follow the appropriate pattern for its data type. Layout MUST follow LAYOUT.md.
 
 ---
 
 #### Content Density Rules
 
-- **[summary] StatCards:** Minimum 2. Maximum 6. If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8). When 5 or 6 components are used, a 3-column grid MUST be used.
-- **[section-nav] tabs:** Minimum 2 tabs. Maximum 6 tabs. If more than 6 sections exist, consolidate into broader categories — do not render more than 6 tabs.
+- **[summary] items:** Recommended 2–4 items. Hard maximum: 6 items. Threshold applies to all components in the slot combined. If the requested count exceeds 6, issue a DENSITY FLAG before generating output — recommended alternative is to prioritize key metrics and move secondary ones into [section-content] (see AGENTS.md). If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8).
+- **[section-nav] tabs:** Recommended 4–6 tabs. Hard maximum: 8 tabs. If the requested tab count exceeds 8, issue a DENSITY FLAG before generating output — recommended alternative is to consolidate into broader categories (see AGENTS.md).
 - **[section-content]:** Show `EmptyState` when the active tab has no data — the section heading and [section-nav] MUST remain visible.
 
 ---
@@ -441,6 +446,13 @@ Displays all information about a single entity (product, post, contact, order) w
 
 #### Intent
 Allows the user to browse a list of items while viewing the detail of a selected item simultaneously, without navigating away from the list.
+
+---
+
+#### Layout
+Uses `full-stretch` layout type (LAYOUT.md S10).
+Structure: outer wrapper `flex w-full`, list panel at a fixed width declared as an SP8 approved exception with inline comment, detail panel fills remaining space with `flex-1 min-w-0`.
+At Mobile: collapse to single column — list panel visible by default; selecting an item navigates to the detail panel as a full-screen view.
 
 ---
 
@@ -464,6 +476,8 @@ Allows the user to browse a list of items while viewing the detail of a selected
 - [list-panel]
 - [detail-panel]
 
+*[page-header] is intentionally omitted — Split View occupies the full content area and uses the [list-panel] as its primary navigation surface.*
+
 ---
 
 #### Slot Definitions
@@ -482,8 +496,8 @@ Allows the user to browse a list of items while viewing the detail of a selected
 
 #### Content Density Rules
 
-- **[list-panel]:** Show `EmptyState` in the list panel when 0 items exist. Paginate when list exceeds 20 items.
-- **[detail-panel]:** Exactly 1 `EmptyState` when no item is selected. When an item is selected, follow content density rules of the Detail Page pattern.
+- **[list-panel]:** Show `EmptyState` in the list panel when 0 items exist. Paginate when list becomes unmanageable for usability.
+- **[detail-panel]:** Show `EmptyState` when no item is selected. When an item is selected, follow content density rules of the Detail Page pattern.
 
 ---
 
@@ -521,8 +535,10 @@ Allows users to view and modify account, product, or application configuration p
 
 #### Slot Architecture
 
+- [global-banner]
 - [page-header]
 - [settings-nav]
+- [section-banner]
 - [settings-section] *(repeatable — one per active category)*
 - [section-actions]
 
@@ -533,7 +549,7 @@ Allows users to view and modify account, product, or application configuration p
 **[settings-nav]**
 - **Allowed:** `Tabs` (line variant), `MenuList` + `MenuListItem`
 - **Do NOT Allow:** `DropdownMenu`, `Button`, any other component
-- **Constraints:** Use `Tabs` (line variant) for horizontal settings navigation (≤6 categories). Use `MenuList` for vertical settings navigation (>6 categories or sidebar-style layout).
+- **Constraints:** Use `Tabs` (line variant) for horizontal settings navigation when category count is manageable. Use `MenuList` for vertical settings navigation when tabs become unmanageable.
 
 **[settings-section]**
 - **Allowed:** `ToggleRow`, `CheckboxRow`, `Input`, `DropdownMenu`, `Button`, `Badge`, `Lock`, `Nudge` (contextual)
@@ -549,8 +565,8 @@ Allows users to view and modify account, product, or application configuration p
 
 #### Content Density Rules
 
-- **[settings-nav] tabs:** Minimum 2 categories. Maximum 6 tabs. If more than 6 categories exist, use `MenuList` for vertical navigation instead of `Tabs`.
-- **[settings-section] groups:** Minimum 1 setting per group. Maximum 10 settings per group. If more than 10 settings exist in a group, split into sub-groups with sub-headings.
+- **[settings-nav] tabs:** Recommended 3–5 tabs. Hard maximum: 6 tabs. If the requested tab count exceeds 6, issue a DENSITY FLAG before generating output — recommended alternative is to switch to `MenuList` vertical navigation (see AGENTS.md).
+- **[settings-section] groups:** Recommended 3–6 settings per group. Hard maximum: 7 settings per group. If the requested setting count exceeds 7 in a single group, issue a DENSITY FLAG before generating output — recommended alternative is to split into sub-groups each with a distinct sub-heading (see AGENTS.md).
 - **[settings-section] (repeatable):** Only 1 [settings-section] is active/visible at a time, determined by [settings-nav] selection.
 
 ---
@@ -600,13 +616,13 @@ Handles the full-page case where a product, feature, or workspace has no data ye
 **[empty-content]**
 - **Allowed:** `EmptyState`
 - **Do NOT Allow:** Any other component as a primary element
-- **Constraints:** MUST be full-width (per LAYOUT.md ST2). MUST NOT be placed inside a multi-column grid. Center-alignment is permitted within `EmptyState` (per LAYOUT.md A3).
+- **Constraints:** Layout MUST follow LAYOUT.md. Center-alignment is permitted within `EmptyState` (per LAYOUT.md A3).
 
 ---
 
 #### Content Density Rules
 
-- **[empty-content]:** Exactly 1 `EmptyState` component. MUST NOT render multiple `EmptyState` components on the same page.
+- **[empty-content]:** MUST NOT render multiple `EmptyState` components on the same page.
 - **[empty-content] CTA:** At most 1 `Button variant="primary"` inside `EmptyState`. If a secondary link action is needed, use `Button variant="link"` — not a second primary button.
 
 ---
@@ -652,6 +668,7 @@ Follows LAYOUT.md S10 (`aside-panel`) and S12:
 
 #### Slot Architecture
 
+- [global-banner]
 - [page-header]
 - [main-column]
 - [aside-panel]
@@ -663,12 +680,19 @@ Follows LAYOUT.md S10 (`aside-panel`) and S12:
 **[main-column]**
 - **Allowed:** Form fields, rule builder groups, configuration sections — following Pattern 4 or Pattern 7 slot rules within this column. `SectionHeader` MUST be used for any named sub-section heading.
 - **Do NOT Allow:** `DataTable`, `ChartFullWidth`, `StatCard` grid at the top level of this column
-- **Constraints:** Fields and groups MUST be stacked vertically. Sub-sections MUST use `SectionHeader`.
+- **Constraints:** Fields MUST follow a vertical flow by default. Field arrangement MUST be optimized per UX_RULES.md. Sub-sections MUST use `SectionHeader`.
 
 **[aside-panel]**
 - **Allowed:** Read-only summary content, `StatCard`, live preview component, contextual `Nudge`, `Badge`, text blocks using design tokens
 - **Do NOT Allow:** Primary form controls (`Input`, `DropdownMenu`, `Toggle`) as the main interactive element. The aside MUST NOT be the primary task surface.
-- **Constraints:** Width is a fixed SP8 approved exception. MUST be `sticky top-0`. MUST be hidden at Mobile and Tablet (`hidden lg:block`).
+- **Constraints:** Width is a fixed SP8 approved exception. MUST be `sticky top-0`. MUST be hidden below the xl breakpoint (`hidden xl:block`).
+
+---
+
+#### Content Density Rules
+
+- **[main-column]:** Density rules for this column follow Pattern 4 (Form / Configuration) or Pattern 7 (Settings Page) density rules as applicable to the content type being built. DENSITY FLAG triggers from those patterns apply here.
+- **[aside-panel]:** No hard maximum — aside panel content is supplementary and read-only by definition. Keep concise for usability.
 
 ---
 
@@ -677,7 +701,7 @@ Follows LAYOUT.md S10 (`aside-panel`) and S12:
 - Aside panel MUST update reactively when main column state changes (where applicable)
 - At Mobile/Tablet, aside panel content that is critical to the task MUST be surfaced inline within [main-column] — do not permanently discard it
 - [page-header] actions affect the entire builder, not a single column
-- Page header inner content MUST mirror the column structure of the content block: outer wrapper `flex gap-300 w-fit mx-auto`, heading div `w-[var(--layout-content-max-width)] min-w-0`, CTA div at the aside panel fixed width (SP8 exception) with `flex-none flex items-center justify-end gap-100`. This left-aligns the heading with the main column and right-aligns the CTAs with the aside panel edge.
+- Page header inner content MUST mirror the column structure of the content block below (per LAYOUT.md S13).
 
 ---
 
@@ -699,8 +723,8 @@ Always use `OperatorChip`. Never use a raw `<button>`, a static text label, or `
 
 | Context | Placement |
 |---------|-----------|
-| Between conditions within a group | Render `OperatorChip` flush-left (`pl-[2px]`) directly below the preceding condition row, above the next condition row |
-| Between groups within a section | Render `OperatorChip` centred between two horizontal divider lines: `flex items-center gap-[12px]` → divider / chip / divider |
+| Between conditions within a group | Render `OperatorChip` flush-left (`pl-[2px]` *(SP8 exception — Figma spec value; must be commented in code)*) directly below the preceding condition row, above the next condition row |
+| Between groups within a section | Render `OperatorChip` centred between two horizontal divider lines: `flex items-center gap-[12px]` *(SP8 exception — Figma spec value; must be commented in code)* → divider / chip / divider |
 
 **Behavior**
 - A single `OperatorChip` controls all connections at its level (all within-group connectors share one operator per group; all between-group connectors share one operator per section)

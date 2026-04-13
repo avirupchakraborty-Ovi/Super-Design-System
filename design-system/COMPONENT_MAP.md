@@ -1,6 +1,6 @@
 # COMPONENT_MAP.md
 ## Super Design System — Component Selection Rules
-`Version 1.0 | Depends on: LAYOUT.md | Priority: Second`
+`Version 1.7 | Depends on: LAYOUT.md | Priority: Second — see AGENTS.md for full priority chain`
 
 ---
 
@@ -30,7 +30,7 @@ Typography token selection MUST follow these rules exactly. These rules apply ac
 |-------|------|-----------------|
 | `text-h0` | 36px | Hero headings, full-page marketing banners only |
 | `text-h1` | 26px | Primary KPI values, large display numbers |
-| `text-h2` | 24px | Major section headings (rare — prefer h3/h4) |
+| `text-h2` | 24px | `[page-header]` screen-level headings. Rare for content-area sections — prefer `text-h3` for section headings within content. |
 | `text-h3` | 20px | Primary section headings within content area |
 | `text-h4` | 18px | Secondary section headings, card group labels |
 | `text-title` | 16px | Card titles, modal headings, page sub-titles |
@@ -41,9 +41,9 @@ Typography token selection MUST follow these rules exactly. These rules apply ac
 
 **T2.** `text-h0` MUST NOT be used inside cards, tables, or form components.
 
-**T3.** `text-supporting` MUST be used for all field labels rendered above inputs. Using `text-body` or larger for field labels is PROHIBITED.
+**T3.** All field labels above components that do not have a built-in `label` prop MUST use the `Label` component. Variant selection MUST reflect the label's hierarchy within its surrounding context — see the Label Variants table. `variant="supporting-caps"` MUST NOT be used as a direct field label above an input or control.
 
-**T4.** Uppercase (`uppercase`) MUST only be applied to: stat card headings, table column headers. Applying uppercase to any other text is PROHIBITED.
+**T4.** Uppercase (`uppercase`) MUST only be applied to: stat card headings, table column headers, and `Label variant="supporting-caps"`. Applying uppercase to any other text is PROHIBITED.
 
 ### Color Tokens
 
@@ -93,6 +93,7 @@ Triggers a user action or navigation event. The primary interactive control for 
 
 **Constraints**
 - Shape MUST always be `full-rounded` (pill). `semi-rounded` is PROHIBITED.
+- Exception: `shape="semi-rounded"` is permitted exclusively for filter/sort action buttons rendered inside `ChartFullWidth` headers, where the button sits directly adjacent to a semi-rounded input. This is the only approved exception to the `full-rounded` shape rule.
 - Every `<button>` element in the UI MUST use the `Button` component. Raw styled `<button>` or `<span>` elements are PROHIBITED.
 - Size MUST match the context density: `lg`/`md` for primary actions, `sm`/`xs` for compact areas, `inline` for text-embedded actions.
 - A section MUST contain at most one `variant="primary"` Button unless explicitly differentiated in scope (per LAYOUT.md SC2).
@@ -213,8 +214,20 @@ Single-line or multiline text entry field for user data input.
 **Constraints**
 - MUST use `w-full` within its container. Fixed pixel widths are PROHIBITED.
 - MUST use the `label` prop for all form field labels. Raw `<label>` elements outside the component are PROHIBITED.
+- Label hierarchy MUST be set via the `labelVariant` prop. Default is `body-medium`. `supporting-caps` is PROHIBITED — it MUST NOT be used as a direct field label per T3.
 - Error state MUST be communicated via the `error` prop — not by external text below the field.
 - `copyable` inputs are automatically read-only — MUST NOT allow user editing.
+
+**Label Variants**
+
+| Variant | When to use |
+|---------|-------------|
+| `body-regular` | Lowest visual weight — secondary or descriptive labels |
+| `body-medium` | DEFAULT. Standard field label — use in most forms |
+| `supporting-medium` | Dense or compact forms where labels are de-emphasised |
+| `supporting-semibold` | Compact but prominent — stands out at small size |
+
+`supporting-caps` is excluded. It MUST NOT be used as a direct field label above a control (T3).
 
 **Variants (Shape)**
 
@@ -237,6 +250,87 @@ Single-line or multiline text entry field for user data input.
 
 ---
 
+### PhoneInput
+
+**Purpose**
+Single-line phone number input with an integrated country selector. Combines a flag icon, dial code, and a native dropdown for country selection with a standard text input for the phone number.
+
+**Use When**
+- Collecting a phone number that may have an international dial code
+- The phone field requires country code selection alongside the number
+
+**Do NOT Use When**
+- A plain number field with no country selection is sufficient → use `Input type="tel"`
+- The field is not specifically for phone numbers
+
+**Constraints**
+- MUST use `w-full` within its container. Fixed pixel widths are PROHIBITED.
+- MUST use the `label` prop for all form field labels. Raw `<label>` elements outside the component are PROHIBITED.
+- Error state MUST be communicated via the `error` prop — not by external text below the field.
+- Default country is India (`"IN"`) — override via `defaultCountryCode` for other markets.
+- `countryCode` puts the country selector in controlled mode — MUST provide `onCountryChange` when using it.
+
+**Variants (Shape)**
+
+`semi-rounded` is the default shape. `full-rounded` is only permitted when explicitly specified.
+
+| Shape | Rule |
+|-------|------|
+| `semi-rounded` | DEFAULT. MUST be used for all phone inputs unless explicitly overridden. |
+| `full-rounded` | ONLY permitted when explicitly specified in the screen design. |
+
+**Sizes**
+
+| Size | Height | MUST be used for |
+|------|--------|-----------------|
+| `lg` | 44px | Prominent single-field forms |
+| `md` | 40px | Default form fields |
+| `sm` | 36px | Compact filter bars, inline search |
+
+**Status:** stable
+
+---
+
+### Label
+
+**Purpose**
+Standalone field label row with an optional mandatory asterisk and optional tooltip icon. Used when a label is needed above a component that does not have a built-in `label` prop.
+
+**Use When**
+- A label is needed above a component that does not accept a `label` prop (e.g. `DropdownMenu`, `CoverImageUpload`, a custom input, or a grouped field set)
+
+**Do NOT Use When**
+- Labelling an `Input` or `PhoneInput` → use the built-in `label` prop on those components directly
+- The label is a sub-section heading → use `SectionHeader`
+
+**Props**
+- `label` — label text (defaults to `"Label"`)
+- `variant` — typography style (see Variants table). Defaults to `"body-medium"`.
+- `mandatory` — shows a `*` asterisk when `true`
+- `tooltip` — shows an info icon when `true`
+- `onTooltipClick` — click handler for the tooltip icon
+
+**Variants**
+
+| Variant | Size | Weight | Case | Character |
+|---------|------|--------|------|-----------|
+| `body-regular` | 14px | Regular | Normal | Lowest visual weight — descriptive, secondary |
+| `body-medium` | 14px | Medium | Normal | Standard label weight — clear, neutral |
+| `supporting-medium` | 12px | Medium | Normal | Compact, receded — de-emphasised |
+| `supporting-semibold` | 12px | Semibold | Normal | Compact but prominent — stands out at small size |
+| `supporting-caps` | 12px | Medium | Uppercase | Category and metadata marker — not a field label |
+
+**Constraints**
+- Variant MUST be selected based on the label's hierarchy within its surrounding context.
+- Custom typography via `className` is PROHIBITED.
+- `variant="supporting-caps"` MUST NOT be used as a direct field label above a single input or control.
+- Mandatory asterisk MUST use `text-text-critical-3`.
+- MUST NOT be used as a section heading — use `SectionHeader` for that purpose.
+
+**Status:** stable
+
+---
+
 ### CoverImageUpload
 
 **Purpose**
@@ -253,7 +347,7 @@ Drag-and-drop upload zone for cover images and videos, with an optional URL entr
 **Constraints**
 - MUST use `w-full` within its container. The component carries a minimum width derived from the Figma spec — override via container constraint, not a fixed prop.
 - Error state renders below the upload zone using `text-text-critical-3`.
-- MUST NOT be placed inside a multi-column grid (per LAYOUT.md CC4 equivalent for form components).
+- MUST NOT be placed inside a multi-column grid.
 
 **Composition Rules**
 - MUST be preceded by a Label or field label.
@@ -284,14 +378,22 @@ Presents a contextual list of selectable options, actions, or settings triggered
 
 | Trigger | Use When |
 |---------|----------|
-| `DropdownMenuChevronTrigger` | Form fields, single-select inputs, settings dropdowns. Full-width, bordered. Designed for vertical form columns. |
+| `DropdownMenuChevronTrigger` | Form fields, single-select inputs, settings dropdowns. Full-width, bordered. Designed for vertical form layouts. Use `variant="form"` when placed alongside Input fields. |
 | `DropdownMenuCompactTrigger` | Filter bars, toolbar controls, inline sort/export. Content-width, ghost style. Designed for horizontal rows. |
 | `OperatorChip` | Inline logical connectors (AND / OR) between conditions or groups in a rule builder. Compact height (~24px). Use when `DropdownMenuCompactTrigger` (36px) is too tall for the surrounding context. |
+
+**`DropdownMenuChevronTrigger` Variants**
+
+| Variant | Border | Radius | Use When |
+|---------|--------|--------|----------|
+| `"default"` | `border-color-level2` (outer border) | 5px (hardcoded) | Standalone dropdowns outside of form layouts. |
+| `"form"` | `border-color-level3` (ring-inset) | `rounded-100` (8px) | Inside form layouts alongside `Input` fields. Matches Input border treatment. |
 
 **Constraints**
 - MUST be triggered using the provided trigger components — raw trigger elements are PROHIBITED.
 - MUST NOT be used as a full-page navigation menu.
 - `DropdownMenuChevronTrigger` size MUST be `"sm"` by default. Only use `"md"` when explicitly specified by the design.
+- `DropdownMenuChevronTrigger` variant MUST be `"form"` when placed inside a form layout alongside `Input` fields.
 
 **Status:** stable
 
@@ -339,7 +441,7 @@ An inline interactive chip for selecting between a small set of short text optio
 ### SectionHeader
 
 **Purpose**
-Renders a sub-section heading row within a content area, card, or panel. Combines a label, optional subtext, optional leading icon or image, and optional trailing button in a single pre-composed primitive.
+Renders a sub-section heading row within a content area, card, or panel. Combines a label, optional subtext, optional leading icon or image, and optional trailing action button in a single pre-composed primitive. Intentionally matches `MenuListItem` in spacing, typography, and icon sizing for visual consistency.
 
 **Use When**
 - Starting any named sub-section within a content area, card, or aside panel
@@ -350,6 +452,8 @@ Renders a sub-section heading row within a content area, card, or panel. Combine
 - It is the primary page-level heading → use raw heading text within the [page-header] slot
 - No label is needed → use a divider or omit the heading entirely
 - The trailing action is destructive → use a dedicated section-level `Button` in [page-header] instead
+- The row is part of a navigable list → use `MenuListItem`
+- Multiple trailing actions are needed → compose manually
 
 **Props**
 - `label` — required. Primary heading text.
@@ -363,7 +467,9 @@ Renders a sub-section heading row within a content area, card, or panel. Combine
 
 **Constraints**
 - `icon` and `image` are mutually exclusive — if both are provided, `image` takes precedence
-- `trailingButtonIcon` is optional; `trailingButton` without an icon is permitted
+- Trailing button is hardcoded to `Button variant="outline" shape="full-rounded" size="sm"` — do not attempt to override size to `xs` or `md`
+- Icon is always rendered at `size="md"` via the `Icon` component — do not pass raw SVG props
+- `SectionHeader` has no border or background — the wrapping container controls those
 - Padding MUST NOT be applied to `SectionHeader`'s root element — spacing is controlled by the parent container's `gap` (per LAYOUT.md SP6)
 - The `SectionHeader` component MUST be used for all [section-header] slots — composing a raw `<h*>` + `<Button>` row is PROHIBITED
 
@@ -574,6 +680,34 @@ Same `type` options as `ChartCard`: `uptrend`, `downtrend`, `neutral-up`, `neutr
 
 ---
 
+### ChartComparison
+
+**Purpose**
+Composite layout component that pairs a `ChartCard` (fixed-width metric summary) with a `ChartFullWidth` (expanding trend chart) in a single horizontal row. Used when a KPI metric and its corresponding trend chart are conceptually paired and belong together visually.
+
+**Use When**
+- A metric card and its corresponding full-width trend chart must appear together in the same row
+- The Analytics or Dashboard pattern requires a card + chart combination as a single unit
+
+**Do NOT Use When**
+- The metric and chart are independent → use `ChartCard` and `ChartFullWidth` separately in their own grid slots
+- Only a chart is needed without a paired metric → use `ChartFullWidth` directly
+- Only a metric is needed without a chart → use `ChartCard` directly
+
+**Props**
+- `card` — required. `ChartCardProps` passed directly to the internal `ChartCard`.
+- `chart` — required. `ChartFullWidthProps` passed directly to the internal `ChartFullWidth`.
+
+**Constraints**
+- The internal `ChartCard` is fixed at `w-[280px]` — this is a Figma-spec approved exception (SP8). Do not override.
+- The internal `ChartFullWidth` fills all remaining width via `flex-1`.
+- MUST be placed full-width (`w-full`) within its container.
+- MUST NOT be placed inside a multi-column grid — this component is itself a two-column layout.
+
+**Status:** stable
+
+---
+
 ### DataTable
 
 **Purpose**
@@ -676,38 +810,6 @@ Rich list item for data rows — displays image/thumbnail, title, subtitle, plat
 - `trailingButton` in `MenuListItem` MUST use `Button variant="outline" shape="full-rounded" size="xs"`. Raw styled buttons in this slot are PROHIBITED.
 - `state` prop (`hover`, `selected`, `disabled`) is for static visual demos only. Interactive state MUST be driven by event handlers.
 - `MenuListItem` MUST NOT be used outside of a `MenuList` wrapper or a clearly defined list container.
-
-**Status:** stable
-
----
-
-### SectionHeader
-
-**Purpose**
-A single-row header for named content sections. Displays an optional leading icon or image, a primary label, an optional subtext line, and an optional trailing action button. Intentionally matches `MenuListItem` in spacing, typography, and icon sizing for visual consistency.
-
-**Use When**
-- Labelling a collapsible or bordered content section with an icon and description
-- Any section that needs a title + subtext + optional single action (e.g. "Add group", "Configure", "Clear all")
-
-**Do NOT Use When**
-- The header is a page-level title → use the `[page-header]` pattern
-- Multiple trailing actions are needed → compose manually
-- The row is part of a navigable list → use `MenuListItem`
-
-**Props**
-- `label` — primary section title (required)
-- `subText` — supporting description below the label
-- `icon` — leading Tabler icon
-- `image` — leading 32×32 image URL (overrides icon)
-- `trailingButton` — button label; renders a `Button variant="outline" shape="full-rounded" size="sm"`
-- `trailingButtonIcon` — leading icon for the trailing button
-- `onTrailingButtonClick` — handler for the trailing button
-
-**Constraints**
-- Trailing button MUST use the default `size="sm"` — do not override to `xs` or `md`
-- Icon is always rendered at `size="md"` via the `Icon` component — do not pass raw SVG props
-- `SectionHeader` has no border or background — the wrapping container controls those
 
 **Status:** stable
 
@@ -1212,12 +1314,18 @@ Horizontal group of icon-only action buttons rendered within a table row.
 
 **Do NOT Use When**
 - Only one action exists → use a single `IconButton`
-- Action count and overflow rules are defined in PATTERNS.md
 
 **Constraints**
 - MUST only contain `IconButton` elements — no `Button` components.
 - MUST NOT be used outside of table row contexts.
 - Each action MUST have an `aria-label`.
+
+**Overflow Rules**
+- When 3 or fewer actions are provided: all actions render inline as `IconButton` elements.
+- When more than 3 actions are provided: the first 2 render inline, and the 3rd slot is always an `IconButton variant="ghost"` showing a vertical dots icon (`IconDotsVertical`). Clicking it opens a `DropdownMenu` containing all remaining actions (3rd onwards).
+- The overflow `IconButton` MUST use `variant="ghost"` and `aria-label="More actions"`.
+- Each item in the overflow `DropdownMenu` MUST use `DropdownMenuItem` with the action's icon and label.
+- The visible inline actions MUST always be the highest-priority actions — order your `actions` array with the most important actions first.
 
 **Status:** stable
 
@@ -1307,6 +1415,18 @@ When multiple decision rules apply, resolve in this order:
 5. Overlay (`Modal`, `SideSheet`, `DropdownMenu`)
 
 Higher priority categories MUST take precedence.
+
+**DropdownMenu classification:** When used as a form selector or filter control → category 3 (Selection input). When used as a contextual action menu triggered by a button → category 5 (Overlay). Classify by the primary purpose on the screen being built.
+
+DS7's intent categories serve three purposes:
+1. Component selection priority within COMPONENT_MAP.md
+2. Slot ordering within PATTERNS.md
+3. Planning intent detection — the 5 categories above are the same categories used in AGENTS.md Phase 1 Step 1 when identifying the primary intent of a screen
+
+After components are selected:
+- UX_RULES.md MUST be applied for grouping and layout optimization
+
+DS7 does NOT control layout, density, or grouping.
 
 ---
 
