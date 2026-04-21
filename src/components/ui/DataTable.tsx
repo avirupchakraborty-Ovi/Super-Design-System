@@ -498,21 +498,29 @@ export function DataTable<T = Record<string, unknown>>({
       )}
 
       {/* ── Line ──────────────────────────────────────────────────────────── */}
+      {/* overflow-x-auto wrapper enables horizontal scroll on narrow viewports.
+          w-fit min-w-full on the frame lets it grow beyond the wrapper when
+          JS-measured column widths exceed the container width, while still
+          filling the full width when columns fit. overflow-hidden on the frame
+          is retained for corner-radius clipping only — it doesn't clip the
+          columns because w-fit makes the frame exactly as wide as its content. */}
       {!isSpaced && (
-        <div className="flex flex-col rounded-100 overflow-hidden border-b border-border-color-level2">
-          <div className="flex">
-            {columns.map((col, i) => (
-              <HeaderCell
-                key={col.key}
-                col={col}
-                isFirst={i === 0}
-                isLast={i === columns.length - 1}
-                type="line"
-                showSortIcons={showSortIcons}
-              />
-            ))}
+        <div className="overflow-x-auto">
+          <div className="flex flex-col rounded-100 overflow-hidden border-b border-border-color-level2 w-fit min-w-full">
+            <div className="flex">
+              {columns.map((col, i) => (
+                <HeaderCell
+                  key={col.key}
+                  col={col}
+                  isFirst={i === 0}
+                  isLast={i === columns.length - 1}
+                  type="line"
+                  showSortIcons={showSortIcons}
+                />
+              ))}
+            </div>
+            {renderLineRows()}
           </div>
-          {renderLineRows()}
         </div>
       )}
 

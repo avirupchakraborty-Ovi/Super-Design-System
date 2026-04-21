@@ -253,6 +253,7 @@ function TokenShowcase() {
           { name: "Level 4 (Muted)", cssVar: "--text-level4" },
           { name: "Level 5 (Faint)", cssVar: "--text-level5" },
           { name: "Inverted", cssVar: "--text-inverted" },
+          { name: "On Brand (fixed white)", cssVar: "--text-on-brand" },
         ]}
       />
 
@@ -515,6 +516,12 @@ function TokenShowcase() {
         <div className="space-y-1">
           {[
             {
+              name: "Display",
+              size: "40px",
+              lineHeight: "40px",
+              weights: ["400", "500", "600", "700"],
+            },
+            {
               name: "H0",
               size: "36px",
               lineHeight: "54px",
@@ -593,7 +600,7 @@ function TokenShowcase() {
 
       <div className="mb-10">
         <p className="mb-4 text-sm text-text-level3">
-          7 elevation shadows. Applied via <code>box-shadow</code> using CSS variable tokens.
+          8 elevation shadows. Applied via <code>box-shadow</code> using CSS variable tokens.
         </p>
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
           <ShadowSwatch
@@ -631,6 +638,11 @@ function TokenShowcase() {
             cssVar="--shadow-chart"
             description="0 0px 2px rgba(0,0,0,0.04)"
           />
+          <ShadowSwatch
+            name="Bottom Nav"
+            cssVar="--shadow-bottom-nav"
+            description="0 0px 1px rgba(0,0,0,0.4), 0 -3px 10px -6px rgba(0,0,0,0.16)"
+          />
         </div>
       </div>
 
@@ -653,8 +665,10 @@ function TokenShowcase() {
             </thead>
             <tbody>
               {[
-                ["--layout-sidebar-width",     "230px", "Fixed sidebar width (sidebar + content shell)"],
-                ["--layout-content-max-width",  "720px", "Max-width for centered layout type"],
+                ["--layout-sidebar-width",      "225px", "Fixed sidebar width (sidebar + content shell)"],
+                ["--layout-content-max-width",  "680px", "Max-width for centered layout type"],
+                ["--layout-bottom-nav-height",   "57px", "Fixed bottom nav bar height (mobile/tablet)"],
+                ["--layout-task-header-height",  "56px", "Fixed task header height (mobile/tablet task flows)"],
               ].map(([token, value, usage]) => (
                 <tr key={token} className="border-t border-border-color-level1">
                   <td className="px-4 py-2 font-mono text-xs text-text-brand-primary">{token}</td>
@@ -714,7 +728,7 @@ function TokenShowcase() {
                 "color/gray, pink, brand, etc.",
                 "color-gray-*, color-pink-*, etc.",
               ],
-              ["Layout Structure", "2", "layout/*", "layout-*"],
+              ["Layout Structure", "3", "layout/*", "layout-*"],
             ].map(([cat, count, figma, code]) => (
               <tr key={cat} className="border-t border-border-color-level1">
                 <td className="px-4 py-2 font-medium text-text-level1">

@@ -91,7 +91,9 @@ export function MenuListItem({
       <div className="flex flex-col flex-1 min-w-0">
         <span className="text-body font-medium text-text-level1 truncate">{label}</span>
         {subText && (
-          <span className="text-supporting text-text-level3 truncate">{subText}</span>
+          <span className="text-supporting text-text-level3 truncate">
+            {subText}
+          </span>
         )}
       </div>
 

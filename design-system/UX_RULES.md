@@ -1,5 +1,5 @@
 # UX_RULES.md
-`Version 1.3 | Priority: Fourth — see AGENTS.md for full priority chain`
+`Version 1.4 | Priority: Fourth — see AGENTS.md for full priority chain`
 
 This file defines UX decision rules, anti-patterns, and validation logic.
 
@@ -483,6 +483,30 @@ FAIL if coupled compact selectors are stacked vertically without justification.
 
 Each check MUST result in PASS, FAIL, CONSTRAINED PASS, or DENSITY FLAG.
 Follow enforcement logic defined in AGENTS.md Execution Order Step 6.
+
+---
+
+## Mobile UX Rules
+
+These rules govern identity and navigation consistency across breakpoints for sidebar+content screens that use Browse mobile shell mode.
+
+**U-Mobile-1 — User identity consistency across breakpoints**
+
+The user identity data displayed in `MobilePageHeader` (name, avatar) MUST be the same object passed to `Sidebar`'s user prop.
+
+- Passing different user data to `Sidebar` and `MobilePageHeader` on the same screen is PROHIBITED.
+- If the user's name or avatar is loaded asynchronously, both components MUST receive the same loading/resolved state simultaneously — not independently.
+
+_Rationale:_ The sidebar and the mobile header are the same conceptual surface rendered at different breakpoints. Showing inconsistent identity between them (e.g. different avatars, different names) creates a trust-eroding UX defect.
+
+**U-Mobile-2 — Secondary link parity across breakpoints**
+
+The `secondaryLinks` passed to `MobilePageHeader` MUST match `CollapsiblePageHeader`'s `secondaryLinks` exactly — same labels, same order, same onClick targets.
+
+- Showing links in the mobile header that are absent from the desktop header (or vice versa) is PROHIBITED.
+- If `CollapsiblePageHeader` renders no secondary links, `MobilePageHeader` MUST also receive no secondary links.
+
+_Rationale:_ Secondary links are page-level sub-navigation. A user who switches from mobile to desktop (or vice versa) must find the same navigation options — any discrepancy is a navigational dead-end at one breakpoint.
 
 ---
 

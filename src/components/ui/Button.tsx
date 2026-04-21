@@ -54,30 +54,30 @@ const sizeStyles: Record<ButtonSize, { classes: string; iconSize: "sm" | "md" }>
 // ─── Variant → normal + hover + disabled colours ────────────
 const variantStyles: Record<ButtonVariant, string> = {
   brand:
-    "bg-brand-primary-500 text-text-inverted hover:bg-brand-primary-600 disabled:bg-gray-100 disabled:text-text-level4",
+    "bg-brand-primary-500 text-text-on-brand hover:bg-brand-primary-600 disabled:bg-surface-level3 disabled:text-text-level4",
   primary:
-    "bg-gray-900 text-text-inverted hover:bg-gray-700 disabled:bg-gray-100 disabled:text-text-level4",
+    "bg-surface-inverted text-text-inverted hover:bg-surface-level9 disabled:bg-surface-level3 disabled:text-text-level4",
   secondary:
-    "bg-gray-0 text-text-level1 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-text-level4",
+    "bg-surface-level1 text-text-level1 hover:bg-surface-level2 disabled:bg-surface-level3 disabled:text-text-level4",
   tertiary:
-    "bg-gray-100 text-text-level1 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-text-level4",
+    "bg-surface-level3 text-text-level1 hover:bg-surface-level2 disabled:bg-surface-level3 disabled:text-text-level4",
   ghost:
-    "bg-transparent text-text-level1 hover:bg-gray-50 disabled:bg-transparent disabled:text-text-level4",
+    "bg-transparent text-text-level1 hover:bg-surface-level2 disabled:bg-transparent disabled:text-text-level4",
   outline:
-    "bg-transparent ring-1 ring-inset ring-border-color-level2 text-text-level1 hover:bg-gray-50 disabled:ring-border-color-level1 disabled:text-text-level4",
+    "bg-transparent ring-1 ring-inset ring-border-color-level2 text-text-level1 hover:bg-surface-level2 disabled:ring-border-color-level1 disabled:text-text-level4",
   "blue-outline":
-    "bg-transparent ring-1 ring-inset ring-border-color-primary text-text-level1 hover:bg-gray-50 disabled:ring-border-color-level1 disabled:text-text-level4",
+    "bg-transparent ring-1 ring-inset ring-border-color-primary text-text-level1 hover:bg-surface-level2 disabled:ring-border-color-level1 disabled:text-text-level4",
   "dash-primary":
-    "bg-transparent border border-dashed border-border-color-primary text-text-level1 hover:bg-gray-50 disabled:border-border-color-level2 disabled:text-text-level4",
+    "bg-transparent border border-dashed border-border-color-primary text-text-level1 hover:bg-surface-level2 disabled:border-border-color-level2 disabled:text-text-level4",
   "dash-outline":
-    "bg-transparent border border-dashed border-border-color-level3 text-text-level1 hover:bg-gray-50 disabled:border-border-color-level2 disabled:text-text-level4",
+    "bg-transparent border border-dashed border-border-color-level3 text-text-level1 hover:bg-surface-level2 disabled:border-border-color-level2 disabled:text-text-level4",
   link:
     "bg-transparent text-text-level1 hover:underline disabled:no-underline disabled:text-text-level4",
 };
 
 // Destructive overrides variant colours entirely
 const destructiveStyles =
-  "bg-critical-500 text-text-inverted hover:bg-critical-600 disabled:bg-gray-100 disabled:text-text-level4";
+  "bg-surface-critical-3 text-text-inverted hover:bg-surface-critical-4 disabled:bg-surface-level3 disabled:text-text-level4";
 
 export function Button({
   variant = "brand",

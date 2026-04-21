@@ -43,6 +43,7 @@
   --text-level4: #999999;
   --text-level5: #cccccc;
   --text-inverted: #ffffff;
+  --text-on-brand: #ffffff; /* Fixed white — does not flip in dark mode. Use on brand-primary-500 surfaces. */
   --text-brand-primary: #156ae8;
   --text-brand-primary-subtle: #1052b5;
   --text-brand-primary-hover: #1052b5;
@@ -300,6 +301,7 @@
   --color-text-level4: var(--text-level4);
   --color-text-level5: var(--text-level5);
   --color-text-inverted: var(--text-inverted);
+  --color-text-on-brand: var(--text-on-brand);
   --color-text-brand-primary: var(--text-brand-primary);
   --color-text-brand-primary-subtle: var(--text-brand-primary-subtle);
   --color-text-brand-primary-hover: var(--text-brand-primary-hover);
@@ -437,6 +439,7 @@
   --spacing-250: 20px;
   --spacing-300: 24px;
   --spacing-400: 32px;
+  --spacing-450: 36px;
   --spacing-500: 40px;
   --spacing-600: 48px;
   --spacing-700: 56px;
@@ -462,8 +465,8 @@
   /* Breakpoints */
   --breakpoint-xs: 0px;
   --breakpoint-sm: 600px;
-  --breakpoint-md: 840px;
-  --breakpoint-lg: 1200px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
 
   /* Shadows */
@@ -474,10 +477,16 @@
   --shadow-card:     0px 2px 8px 0px rgba(0,0,0,0.16);
   --shadow-toggle:   0px 2px 6px rgba(0,0,0,0.15), 0px 1px 2px rgba(0,0,0,0.08);
   --shadow-chart:    0px 0px 2px rgba(0,0,0,0.04);
+  --shadow-bottom-nav: 0px 0px 1px 0px rgba(0,0,0,0.4), 0px -3px 10px -6px rgba(0,0,0,0.16);
 
   /* Layout Structure */
-  --layout-sidebar-width:     225px;
-  --layout-content-max-width: 680px;
+  --layout-sidebar-width:            225px;
+  --layout-content-max-width:        680px;
+  --layout-bottom-nav-height:        57px;
+  --layout-mobile-header-height:     52px;
+  --layout-task-header-height:       56px;
+  --layout-collapsed-bar-height:     73px;
+  --layout-filter-bar-height:        69px;
 
 }
 
@@ -492,6 +501,10 @@ body {
    Single source of truth — edit values here only.
    ---------------------------------------------------------- */
 @layer utilities {
+  .text-display {
+    font-size: 40px;
+    line-height: 40px;
+  }
   .text-h0 {
     font-size: 36px;
     line-height: 54px;

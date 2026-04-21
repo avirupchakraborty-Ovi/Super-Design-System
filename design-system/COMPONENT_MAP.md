@@ -1,6 +1,6 @@
 # COMPONENT_MAP.md
 ## Super Design System — Component Selection Rules
-`Version 1.7 | Depends on: LAYOUT.md | Priority: Second — see AGENTS.md for full priority chain`
+`Version 3.1 | Depends on: LAYOUT.md | Priority: Second — see AGENTS.md for full priority chain`
 
 ---
 
@@ -28,6 +28,7 @@ Typography token selection MUST follow these rules exactly. These rules apply ac
 
 | Token | Size | MUST be used for |
 |-------|------|-----------------|
+| `text-display` | 40px | CollapsiblePageHeader expanded title only |
 | `text-h0` | 36px | Hero headings, full-page marketing banners only |
 | `text-h1` | 26px | Primary KPI values, large display numbers |
 | `text-h2` | 24px | `[page-header]` screen-level headings. Rare for content-area sections — prefer `text-h3` for section headings within content. |
@@ -39,7 +40,7 @@ Typography token selection MUST follow these rules exactly. These rules apply ac
 
 **T1.** Each text element MUST use exactly one size token. Mixing tokens within a single text element is PROHIBITED.
 
-**T2.** `text-h0` MUST NOT be used inside cards, tables, or form components.
+**T2.** `text-display` and `text-h0` MUST NOT be used inside cards, tables, or form components. `text-display` is restricted to `CollapsiblePageHeader` expanded state only.
 
 **T3.** All field labels above components that do not have a built-in `label` prop MUST use the `Label` component. Variant selection MUST reflect the label's hierarchy within its surrounding context — see the Label Variants table. `variant="supporting-caps"` MUST NOT be used as a direct field label above an input or control.
 
@@ -53,7 +54,8 @@ Typography token selection MUST follow these rules exactly. These rules apply ac
 | `text-text-level2` | Secondary content, descriptions |
 | `text-text-level3` | Helper text, placeholders, disabled labels |
 | `text-text-level4` | Muted/faint text, ghost placeholders |
-| `text-text-inverted` | Text on dark/inverted backgrounds |
+| `text-text-inverted` | Text on dark/inverted backgrounds (flips to black in dark mode) |
+| `text-text-on-brand` | Fixed white on brand-primary-500/600 surfaces — NEVER inverts in dark mode |
 | `text-text-critical-3` | Error messages, destructive state labels |
 | `text-text-brand-primary` | Brand links, active indicators, CTA labels on light bg |
 
@@ -124,6 +126,25 @@ Triggers a user action or navigation event. The primary interactive control for 
 | `xs` | 32px | Dense UI, table toolbars, inline rows |
 | `inline` | auto | Embedded within text content or tight component slots |
 
+**Token Reference**
+
+| State | Tokens |
+|-------|--------|
+| `brand` | `bg-brand-primary-500 text-text-on-brand hover:bg-brand-primary-600` |
+| `primary` | `bg-surface-inverted text-text-inverted hover:bg-surface-level9` |
+| `secondary` | `bg-surface-level1 text-text-level1 hover:bg-surface-level2` |
+| `tertiary` | `bg-surface-level3 text-text-level1 hover:bg-surface-level2` |
+| `ghost` | `bg-transparent text-text-level1 hover:bg-surface-level2` |
+| `outline` | `ring-border-color-level2 text-text-level1 hover:bg-surface-level2` |
+| `blue-outline` | `ring-border-color-primary text-text-level1 hover:bg-surface-level2` |
+| `dash-primary` | `border-border-color-primary text-text-level1 hover:bg-surface-level2` |
+| `dash-outline` | `border-border-color-level3 text-text-level1 hover:bg-surface-level2` |
+| `link` | `bg-transparent text-text-level1 hover:underline` |
+| `destructive` (any variant) | `bg-surface-critical-3 text-text-inverted hover:bg-surface-critical-4` |
+| disabled (all variants) | `bg-surface-level3 text-text-level4` |
+
+> `text-text-on-brand` is a fixed-white token — it does NOT invert in dark mode. MUST be used on `bg-brand-primary-500/600` surfaces. MUST NOT be replaced with `text-text-inverted`.
+
 **Status:** stable
 
 ---
@@ -167,6 +188,9 @@ Identical variant set to `Button`: `brand`, `primary`, `secondary`, `tertiary`, 
 | `sm` | 36×36px |
 | `xs` | 32×32px |
 | `inline` | 28×28px |
+
+**Token Reference**
+Identical to Button. See Button Token Reference above.
 
 **Status:** stable
 
@@ -728,7 +752,7 @@ Full-featured tabular data display with built-in search, filter, sort, export to
 - Column `render` function MUST NOT contain layout-breaking elements (e.g. full-width blocks).
 - Pagination behavior is defined in PATTERNS.md.
 
-**Mobile behavior (below 600px)**
+**Mobile behavior (below 768px)**
 - Toolbar search bar height reduces to 32px.
 - Filter, Sort, and Export collapse to `IconButton size="xs" shape="semi-rounded" variant="outline"`. `shape="semi-rounded"` is required — these buttons sit directly adjacent to the semi-rounded search bar.
 - Pagination: "Items per page" label is hidden; the page size dropdown remains visible.
@@ -758,6 +782,19 @@ Use `fillHeight` by default on every page-level DataTable. Only omit it when the
   </div>
 </main>
 ```
+
+**Browse-mode Mobile and Tablet — sticky panel context**
+
+Inside the sticky panel (LAYOUT.md R12c), the [content] wrapper is `flex-1 min-h-0`. DataTable MUST use `fillHeight className="h-full"`:
+
+```tsx
+// ✅ Browse-mode mobile sticky panel
+<div className="flex-1 min-h-0 pt-200 px-200 sm:px-300 md:px-400">
+  <DataTable fillHeight className="h-full" columns={columns} data={data} pagination={...} />
+</div>
+```
+
+Non-`fillHeight` DataTable MUST NOT be used in this context. Without `fillHeight`, the DataTable renders in normal document flow with no inner scroll container — the toolbar and column header cannot pin, and wide column content will not produce horizontal scroll without additional wrapper handling.
 
 **Composition Rules**
 - MAY contain in column cells: `Badge`, `Thumbnail`, `TableActionGroup`, `FollowerCount`, `Lock`, `Progress`, `TableList`
@@ -1044,9 +1081,10 @@ High-visibility system notification, optionally with a countdown timer. Typicall
 - System-wide alerts (maintenance, outage, deadline)
 - Countdown scenarios with a visible timer
 - Critical account states requiring immediate user action
+- Mobile/Tablet aside-panel content trigger (`type="info"`) — when Pattern 9 aside content is hidden below the `lg` breakpoint and needs a discoverable access point. MUST use `dismissible={false}`, `actionLabel` as the CTA, and `onAction` to open a `BottomSheet` containing the aside content. Visible at Mobile/Tablet only (`md:hidden`). Positioned immediately after `TaskHeader`, before the scrollable content area.
 
 **Do NOT Use When**
-- The message is section-specific and persistent → use `Nudge`
+- The message is section-specific and persistent → use `Nudge`. Exception: aside-panel content triggers use `Alert type="info"` — see "Use When" above.
 - The message is promotional → use `PromoBanner`
 - The message is a form error → use `Input` error state
 
@@ -1364,6 +1402,465 @@ Horizontal group of icon-only action buttons rendered within a table row.
 
 ---
 
+### BottomNavBar
+
+**Purpose**
+Fixed bottom navigation bar for mobile and tablet breakpoints. Replaces the sidebar as the primary app navigation when the sidebar is hidden (per LAYOUT.md R5, R11, R12).
+
+**Use When**
+- The screen uses Browse mobile shell mode (per PATTERNS.md Section 6)
+- The current breakpoint is Mobile or Tablet
+
+**Do NOT Use When**
+- The screen uses Task mobile shell mode → use `TaskHeader` + sticky [form-actions] footer
+- The current breakpoint is Desktop or Wide → use `Sidebar`
+- The screen uses `content-only` shell type with no app-level navigation
+
+**Props**
+- `items` — required. Array of primary navigation items (shown directly in the bar), each with `icon`, `label`, `href` or `onClick`.
+- `overflowItems` — optional. Array of secondary navigation items shown in the overflow bottom sheet, each with `icon`, `label`, `description`, `href` or `onClick`. When provided, a "More" trigger is rendered as the last slot in the bar.
+- `activeItem` — required. Identifier of the currently active navigation item (may be in `items` or `overflowItems`). Active state MUST be driven by the current route — never hardcoded.
+
+**Fixed Navigation Structure**
+
+The `BottomNavBar` MUST always render exactly these 5 items in this order:
+
+| Slot | Label | Destination |
+|------|-------|-------------|
+| 1 | Home | Primary home / dashboard screen |
+| 2 | Store | Store screen |
+| 3 | Apps | Apps screen — entry point for product modules |
+| 4 | Payments | Payments screen |
+| 5 | More | Overflow bottom sheet — secondary and utility screens |
+
+Adding, removing, or reordering these items is PROHIBITED unless explicitly instructed by the product owner.
+
+**New screen placement rule:** When a new screen or feature is being designed, Claude MUST ask the user: *"Where should this appear in the bottom nav — under Apps or More?"* before generating any output. Claude MUST NOT assume placement. Most new product screens will be accessed via Apps or More.
+
+**Constraints**
+- Maximum 4 direct items when `overflowItems` is provided (4 items + "More" trigger = 5 visible slots). Maximum 5 items when `overflowItems` is absent. Minimum 3 in all cases.
+- Each slot MUST display an icon above a text label. Icon-only items are PROHIBITED.
+- Items MUST be evenly distributed across the full bar width (`flex-1` on each slot).
+- Icon MUST be rendered as a Tabler icon component at `size={24}` inside a `w-6 h-6` (24×24px) wrapper. The `Icon` component MUST NOT be used here — no `Icon` size token maps to 24px (SP8 exception — Figma-spec nav icon size).
+- Icon and label MUST stack with no gap between them. Vertical centering is achieved by `items-center justify-center` on the slot container.
+- Labels MUST use `text-supporting` (12px) with `style={{ letterSpacing: "0.02em" }}` (SP8 exception — 2% Figma spec; no Tailwind tracking token maps to this value exactly).
+- Inactive slots: icon and label MUST use `text-text-level3`, label `font-normal`.
+- Active slots: icon and label MUST use `text-text-brand-primary`, label `font-semibold`, plus `border-t-2 border-text-brand-primary` on the slot container.
+- The "More" trigger MUST use a hamburger menu icon with the label "More". It is not a navigation destination — it opens the overflow `BottomSheet`.
+- When the active page is one of the `overflowItems`, the "More" trigger MUST reflect active state (brand-primary color + top border + semibold label).
+- Height MUST use `var(--layout-bottom-nav-height)`. Hardcoded pixel values are PROHIBITED (per LAYOUT.md R12).
+- MUST include safe area inset padding at the bottom (per LAYOUT.md R15).
+- MUST be hidden at Desktop and Wide breakpoints: `md:hidden`.
+- Background MUST use `bg-surface-level1`. Elevation MUST use `shadow-bottom-nav`. No top border — the shadow provides the visual separation from content.
+- MUST NOT contain actions (buttons, toggles) — navigation items only.
+
+**Overflow Bottom Sheet**
+- Triggered by tapping the "More" item.
+- Renders as a `BottomSheet` component anchored to the bottom of the viewport with a backdrop overlay.
+- Each overflow item renders as a `BottomSheetListItem` with `icon`, `label`, and `subText`.
+- The currently active overflow item MUST pass `selected={true}` to `BottomSheetListItem`.
+- The sheet MUST include a drag handle at the top.
+- Tapping the backdrop or swiping down dismisses the sheet.
+
+**Status:** draft
+
+---
+
+### MobilePageHeader
+
+**Purpose**
+Fixed top bar for mobile and tablet breakpoints in Browse mode. Provides app identity (logo), current page context (title), and user identity (avatar). Optionally renders a secondary-links row below the dark bar for page-level sub-navigation. Pairs with `BottomNavBar` to form the complete Browse-mode mobile shell.
+
+**Use When**
+- The screen uses Browse mobile shell mode (per PATTERNS.md Section 6)
+- The current breakpoint is Mobile or Tablet
+
+**Do NOT Use When**
+- The screen uses Task mobile shell mode → use `TaskHeader` instead
+- The current breakpoint is Desktop or Wide → use `CollapsiblePageHeader` or `PageHeader` within the sidebar shell
+- The screen uses `content-only` shell type with no app-level navigation
+
+**Props**
+- `title` — required. Current page name. MUST match the `CollapsiblePageHeader` title on the same screen (UX_RULES U-Mobile-1).
+- `user` — required. User identity object `{ name, avatar?, onSettingsClick? }`. MUST be the same object passed to `Sidebar`'s user prop — passing different data is PROHIBITED (UX_RULES U-Mobile-1).
+- `secondaryLinks` — optional. Array of `{ label, icon?, onClick }`. When provided, renders a second row below the dark bar. MUST match `CollapsiblePageHeader`'s `secondaryLinks` exactly (UX_RULES U-Mobile-2).
+- `onLogoClick` — optional. Called when the compact logo is tapped — typically navigates to home/dashboard.
+- `onAvatarClick` — optional. Called when the user avatar is tapped — typically opens profile/settings.
+
+**Constraints**
+- MUST be `fixed top-0 left-0 right-0 z-30` — MUST NOT scroll with content.
+- Height is dynamic: `~52px` without secondary links, `~89px` with secondary links. MUST be tracked via `--layout-mobile-header-height` CSS variable (set via `ResizeObserver` + `useLayoutEffect` — synchronous write before first paint). `useEffect` is PROHIBITED here — it fires after paint and causes broken sticky positions during initial render. Hardcoded pixel values are PROHIBITED (per LAYOUT.md).
+- MUST include safe area inset at the top: `pt-[env(safe-area-inset-top)]` (per LAYOUT.md R15).
+- MUST be hidden at Desktop and Wide breakpoints: `md:hidden`.
+- Dark bar (`bg-surface-inverted`) renders: logo (left) → page title (center, `flex-1`) → user avatar (right).
+  - Logo MUST render `SuperProfileLogo variant="compact"`.
+  - Title MUST use `text-title font-medium text-text-inverted truncate`.
+  - Avatar: if `user.avatar` is provided, renders `<img>` with `w-450 h-450 rounded-500 ring-1 ring-border-color-inverted`; otherwise renders initial fallback with `bg-brand-primary-600 text-text-on-brand`.
+- Secondary-links row (when `secondaryLinks` provided): `bg-surface-level1 border-b border-border-color-level2 shadow-bottom-nav`. Each link is `flex-1 justify-center` — fills width equally. Adjacent links separated by a 1px × 16px vertical divider (`bg-border-color-level2`). Icon (when provided) via `Icon size="sm"`.
+
+**Status:** draft
+
+---
+
+### TaskHeader
+
+**Purpose**
+Fixed top bar for mobile and tablet breakpoints during creation, editing, and multi-step flows. Replaces the standard [page-header] and provides navigation escape (close), task context (title), flow progress (step indicator), and an optional secondary action.
+
+**Use When**
+- The screen uses Task mobile shell mode (per PATTERNS.md Section 6)
+- The current breakpoint is Mobile or Tablet
+
+**Do NOT Use When**
+- The screen uses Browse mobile shell mode → use `BottomNavBar` + standard [page-header]
+- The current breakpoint is Desktop or Wide → use standard [page-header] within the sidebar shell
+
+**Props**
+- `title` — required. Short task label (e.g., "New page", "Edit product").
+- `onClose` — required. Handler for the close button. Navigates back to the previous screen or closes the flow.
+- `totalSteps` — optional. Total number of steps in a multi-step flow. When provided, renders a step indicator.
+- `currentStep` — optional. Current step number (1-indexed). Required when `totalSteps` is provided.
+- `secondaryAction` — optional. Renders a secondary action button in the trailing position. Permitted ONLY for `proportional-split` layout screens (per LAYOUT.md R13). Accepts `{ label: string, icon?: TablerIcon, onClick: () => void }`. MUST NOT be passed for `aside-panel`, `centered`, or `full-stretch` layouts.
+
+**Constraints**
+- Close button MUST use `IconButton size="inline" variant="ghost"` with a close (×) icon. It is always the leftmost element. `onClose` is required — a TaskHeader without an exit is PROHIBITED.
+- Title MUST use `text-body font-medium text-text-level1`. Long titles MUST truncate (`truncate`) — they MUST NOT wrap or push other elements.
+- Height MUST use `var(--layout-task-header-height)`. Hardcoded pixel values are PROHIBITED (per LAYOUT.md R13).
+- MUST be sticky or fixed at the top — MUST NOT scroll with content. (per LAYOUT.md R13)
+- MUST include safe area inset padding at the top (per LAYOUT.md R15).
+- MUST be hidden at Desktop and Wide breakpoints: `md:hidden`. (per LAYOUT.md R13)
+- Background MUST use `bg-surface-level1` with a bottom border `border-b border-border-color-level2`.
+
+**StepIndicator — conditional rendering:**
+- MUST be shown only when `totalSteps > 1`. Multi-step flows provide both `currentStep` and `totalSteps`.
+- MUST be hidden for single-step flows. Passing `totalSteps={1}` or omitting both props renders no indicator. (per PATTERNS.md P4)
+- Step indicator renders as a dot row (`StepIndicator` component) followed by a "Step N" label.
+
+**Secondary action — conditional rendering:**
+- MUST only be rendered when `secondaryAction` is explicitly passed by the caller.
+- The caller MUST only pass `secondaryAction` when the screen uses `proportional-split` layout (LAYOUT.md S14).
+- MUST NOT be passed for `aside-panel`, `centered`, or `full-stretch` layouts. (per LAYOUT.md R13)
+- When rendered, MUST use `Button variant="outline" shape="full-rounded" size="xs"`.
+- When neither StepIndicator nor secondary action is present, the right side of the header is empty.
+
+**Status:** draft
+
+---
+
+### BottomSheet
+
+**Purpose**
+Modal overlay anchored to the bottom of the viewport. Slides up from the bottom edge with a backdrop. The standard mobile overlay pattern for contextual content that doesn't warrant a full-screen takeover.
+
+**Use When**
+- Presenting overflow navigation items (BottomNavBar "More" menu)
+- Mobile adaptation of dropdowns or selection lists that are too complex for a standard popover
+- Any mobile overlay that benefits from bottom-anchored presentation for thumb reachability
+
+**Do NOT Use When**
+- The content requires full-screen focus → use `Modal` (full-screen on mobile) or `SideSheet` (full-screen on mobile)
+- Desktop or Wide breakpoints → use `DropdownMenu`, `Modal`, or `SideSheet` as appropriate
+- The content is a simple list of 3 or fewer options → use `DropdownMenu` directly
+
+**Props**
+- `open` — required. Controls visibility.
+- `onClose` — required. Called on backdrop tap, swipe-down, or escape key.
+- `children` — required. Content rendered inside the sheet.
+- `title` — optional. Heading text rendered below the drag handle.
+
+**Constraints**
+- MUST render a drag handle (centered horizontal bar) at the top of the sheet.
+- MUST render a backdrop overlay behind the sheet. Tapping the backdrop MUST call `onClose`.
+- MUST support swipe-down-to-dismiss gesture.
+- MUST include safe area inset padding at the bottom (per LAYOUT.md R15).
+- Max height MUST NOT exceed 80% of the viewport height. Content that exceeds available height MUST scroll internally.
+- Border radius MUST use `rounded-150` (12px) on top-left and top-right corners. Bottom corners have no radius (anchored to viewport edge).
+- Background MUST use `bg-surface-level1`.
+- MUST be used at Mobile and Tablet breakpoints only. At Desktop and Wide, the triggering component should use its desktop-appropriate overlay instead.
+
+**Status:** draft
+
+---
+
+### BottomSheetListItem
+
+**Purpose**
+Single navigable row used exclusively inside a `BottomSheet`. Combines a leading icon, a primary label, and a wrapping descriptive sub-text. Selected state uses a brand-primary surface + border treatment — visually distinct from `MenuListItem`'s selected state (`bg-surface-level1-hover`, no border).
+
+**Use When**
+- Rendering overflow navigation items inside `BottomSheet` (BottomNavBar "More" menu)
+- Any `BottomSheet` where each item has both a label and a multi-line description
+
+**Do NOT Use When**
+- Items do not have a descriptive sub-text → use `MenuListItem` inside a `MenuList`
+- The list is not inside a `BottomSheet` → use `MenuListItem` or `TableList` as appropriate
+- The item is a form control → use `ToggleRow` or `CheckboxRow`
+
+**Props**
+- `icon` — required. Tabler icon component. Rendered via `Icon size="md"` (20px frame).
+- `label` — required. Primary row label. `text-body font-medium text-text-level1`.
+- `subText` — required. Descriptive sentence below the label. `text-body font-normal text-text-level2`. Multi-line allowed — no truncation.
+- `selected` — optional boolean. Activates selected state. Default `false`.
+- `onClick` — optional. Called on tap.
+
+**States**
+
+| State | Background | Border |
+|-------|-----------|--------|
+| default | `bg-surface-level1` | none |
+| hover | `bg-surface-level2` | none |
+| selected | `bg-surface-brand-primary-subtle` | `border border-border-color-primary` |
+| disabled | `opacity-40`, no pointer events | — |
+
+**Layout**
+- Container: `rounded-100`, `px-100 py-125`, `items-start`, `gap-100`
+- Icon wrapper: `shrink-0`, vertically aligned to first line
+- Text column: `flex-col`, `flex-1`, `min-w-0` — sub-text wraps freely
+
+**Constraints**
+- Icon MUST be rendered via `Icon size="md"`. Raw `<svg>` or direct Tabler icon usage is PROHIBITED.
+- `BottomSheetListItem` MUST NOT be used outside a `BottomSheet`.
+- Selected state border MUST use `border-border-color-primary` — no hardcoded border colour values.
+- Background tokens MUST be used for all states — no raw colour values.
+
+**Status:** draft
+
+---
+
+### StepIndicator
+
+**Purpose**
+Inline progress primitive showing current step position within a multi-step task flow. Renders a row of 6×6px dots (filled/unfilled) plus a "Step N" label.
+
+**Use When**
+- A task flow has 2–7 steps and the user needs to track their position
+- Inside a `TaskHeader` or at the top of a multi-step modal/sheet
+
+**Do NOT Use When**
+- The flow has only one step (no progress to communicate)
+- A vertical step-by-step sidebar is needed → use a dedicated stepper list component
+- Inside dense table rows or card content
+
+**Props**
+- `currentStep` — required. 1-indexed integer. Current active step.
+- `totalSteps` — required. Integer. Total number of steps in the flow.
+- `className` — optional. Additional Tailwind classes.
+
+**Visual spec**
+- Dot size: 6×6px (SP8 exception — set via inline `style`, not Tailwind scale utilities)
+- Filled dots (steps ≤ currentStep): `bg-surface-inverted`
+- Unfilled dots (steps > currentStep): `bg-surface-level4`
+- Dot gap: `gap-50` (4px)
+- Label: `text-supporting font-medium text-text-level3` — reads "Step N"
+- Row gap between dots and label: `gap-150` (12px)
+
+**Tokens**
+| Element | Token |
+|---------|-------|
+| Filled dot | `bg-surface-inverted` |
+| Unfilled dot | `bg-surface-level4` |
+| Label | `text-text-level3 text-supporting font-medium` |
+
+**Constraints**
+- Dot dimensions MUST be set with `style={{ width: 6, height: 6 }}` — Tailwind's `w-75`/`h-75` resolve to 300px on the default numeric scale and MUST NOT be used for this purpose.
+- ALL steps MUST be rendered (filled + unfilled) — do not show only filled dots.
+- MUST NOT be used standalone as a page-level progress bar. Use only within task flow shells.
+
+**Status:** stable
+
+---
+
+### FormFooter
+
+**Purpose**
+Sticky bottom action bar for mobile and tablet breakpoints during task flows. Provides the primary CTA and an optional back action. Replaces the desktop [form-actions] row at the bottom of the main column.
+
+**Use When**
+- The screen uses Task mobile shell mode (per PATTERNS.md Section 6)
+- The current breakpoint is Mobile or Tablet
+
+**Do NOT Use When**
+- The screen uses Browse mobile shell mode → no sticky footer needed
+- The current breakpoint is Desktop or Wide → use the `[form-actions]` slot in the main column instead. Exception: Pattern 9 (Builder/Aside-Panel) uses `[page-header]` for all actions at Desktop and Wide — `[form-actions]` MUST NOT be added to [main-column] for Pattern 9 at any breakpoint.
+
+**Props**
+- `continueLabel` — optional. Label for the primary CTA button. Defaults to `"Save & Continue"`. Use `"Publish"`, `"Done"`, or flow-specific language as needed.
+- `onContinue` — optional. Handler for the primary CTA.
+- `continueDisabled` — optional boolean. Disables the primary CTA — e.g. while saving or when required fields are incomplete.
+- `showBack` — optional boolean. Defaults to `true`. Pass `false` on step 1 and single-step flows.
+- `backLabel` — optional. Label for the back button. Defaults to `"Back"`.
+- `onBack` — optional. Handler for the back button.
+
+**Constraints**
+- MUST be rendered at Mobile and Tablet breakpoints only. MUST be hidden at Desktop and Wide: `md:hidden`. (per LAYOUT.md R14, R16)
+- MUST be sticky or fixed at the bottom of the viewport — MUST NOT scroll with content. (per LAYOUT.md R14)
+- MUST include safe area inset padding at the bottom: `pb-[env(safe-area-inset-bottom,0px)]`. Additive to standard internal padding. (per LAYOUT.md R15)
+- Background MUST use `bg-surface-level1` with a top border `border-t border-border-color-level2`.
+
+**Back action — conditional rendering:**
+- MUST be hidden on step 1 and on all single-step flows (`showBack={false}`). (per LAYOUT.md R14)
+- MUST only be shown when there is a previous step to return to (step 2 onward in multi-step flows).
+- Back button MUST use `Button variant="outline" size="sm" leadingIcon={IconChevronLeft}`.
+- When `showBack={false}`, the primary CTA spans the full footer width.
+
+**Primary CTA:**
+- MUST use `Button variant="primary" size="sm"`.
+- Both buttons use `flex-1` when back is visible — equal width split.
+
+**Status:** stable
+
+---
+
+### Breakpoint-Scoped Component Registry
+
+This registry is the canonical list of components whose visibility is controlled by breakpoint. When composing a screen, the AI MUST apply exactly the visibility classes listed here — no alternate responsive logic is permitted (per LAYOUT.md R16).
+
+| Component | Mobile | Tablet | Desktop | Wide | Required visibility class | Source rule |
+|-----------|:------:|:------:|:-------:|:----:|---------------------------|-------------|
+| `Sidebar` | — | — | ✓ | ✓ | `hidden md:flex` | LAYOUT.md R5, R16 |
+| `BottomNavBar` (Browse) | ✓ | ✓ | — | — | `md:hidden` | LAYOUT.md R12, R16 |
+| `TaskHeader` (Task) | ✓ | ✓ | — | — | `md:hidden` | LAYOUT.md R13, R16 |
+| `FormFooter` (Task) | ✓ | ✓ | — | — | `md:hidden` | LAYOUT.md R14, R16 |
+| `PageHeader` (screen-level heading + CTAs) | — | — | ✓ | ✓ | `hidden md:block` | LAYOUT.md S13, R16 |
+| `AsidePanel` (Pattern 9) | — | — | — | ✓ | `hidden lg:block` | LAYOUT.md S12, R16 |
+
+Pairing rule: within a single screen, Browse and Task mobile shell components MUST NOT be mixed (per LAYOUT.md R11, R16).
+
+Screens using Pattern 9 (Builder / Aside-Panel) MUST include both `TaskHeader` + `FormFooter` (Mobile/Tablet shell) AND `PageHeader` with CTAs (Desktop/Wide page header). Critical aside-panel content MUST be surfaced inline in [main-column] at Mobile/Tablet (per PATTERNS.md Pattern 9 [aside-panel] Constraints).
+
+---
+
+### PageHeader
+
+**Purpose**
+Screen-level page header that renders a heading, optional sub-text, and optional CTAs. Encapsulates the responsive behavior specified in LAYOUT.md S13 and S15 so that screens do not re-implement breakpoint-dependent class strings.
+
+**Use When**
+- The screen needs a heading + description block at the top of the content area at Desktop/Wide
+- The screen is a Task-mode pattern and needs CTAs at Desktop/Wide (while Mobile/Tablet shows `TaskHeader` + `FormFooter`)
+
+**Do NOT Use When**
+- The screen uses `content-only` shell type with no top-of-page header
+- The current breakpoint is Mobile or Tablet for Task-mode patterns — `TaskHeader` replaces it (per LAYOUT.md R13). The `PageHeader` component handles this internally via `hidden md:block`.
+
+**Props**
+- `title` — required. Heading text. MUST use `text-h2 font-semibold text-text-level1`.
+- `subtext` — optional. Description text below the heading. MUST use `text-body font-normal text-text-level3`.
+- `actions` — optional. ReactNode containing `Button`, `IconButton`, or `Badge` elements aligned to the trailing edge.
+- `layout` — required. One of `"full-stretch" | "centered" | "aside-panel" | "proportional-split"`. Determines the responsive inner structure per LAYOUT.md S13 and S15.
+- `asideWidthClass` — optional (required when `layout="aside-panel"`). Tailwind class string for the aside-mirroring actions column at Wide, e.g. `"lg:w-[260px]"`. Must be declared as SP8 exception where applicable.
+
+**Constraints**
+- Outer container MUST use `hidden md:block flex-none py-250 border-b border-border-color-level2` with responsive horizontal padding per S6: `px-200 sm:px-300 md:px-400`.
+- Inner wrapper structure varies by `layout` (per LAYOUT.md S13, S15):
+  - `full-stretch`: full-width flex, heading `flex-1 min-w-0`, actions `flex-none` right
+  - `centered`: `w-[var(--layout-content-max-width)] mx-auto`, then full-width flex inside
+  - `aside-panel`: `flex gap-300 items-center w-full md:w-[var(--layout-content-max-width)] md:mx-auto lg:w-fit` — at Desktop, constrained to content-max-width centered (aligns with main column); at Wide, `w-fit` with column mirroring. Heading `flex-1 min-w-0 lg:w-[var(--layout-content-max-width)] lg:flex-none`, actions `flex-none flex items-center justify-end gap-100 ${asideWidthClass}`
+  - `proportional-split`: full-width flex, heading `flex-1 min-w-0`, actions `flex-none` right (no column mirroring)
+- Visibility MUST follow LAYOUT.md R16: `hidden md:block` — the component is excluded from Mobile/Tablet rendering.
+- MUST NOT be rendered at Mobile or Tablet — `TaskHeader` is the Mobile/Tablet equivalent (per LAYOUT.md R13).
+
+**Status:** stable
+
+---
+
+### AsidePanel
+
+**Purpose**
+Wrapper for aside-panel slot content in Pattern 9 (Builder / Aside-Panel). Encapsulates the visibility, width, and sticky behavior specified in LAYOUT.md S12.
+
+**Use When**
+- The screen uses Pattern 9 (Builder / Aside-Panel)
+- The aside panel contains supplementary read-only content (StatCards, live preview, contextual nudge)
+
+**Do NOT Use When**
+- The screen is not using Pattern 9
+- The content is primary or interactive — see Pattern 9 [aside-panel] slot rules in PATTERNS.md
+
+**Props**
+- `children` — required. Slot content.
+- `width` — optional. Tailwind class string for aside width (e.g. `"w-[260px]"`). MUST be declared as SP8 exception with inline comment documenting the Figma-spec value. Default: `"w-[260px]"`.
+- `className` — optional. Additional classes.
+
+**Constraints**
+- Outer div MUST use `hidden lg:block {width} flex-none sticky top-0` — not configurable.
+- The aside MUST NOT contain primary form controls (per Pattern 9 [aside-panel] slot rules in PATTERNS.md).
+- Width MUST be consistent with any other aside panels on the same screen (per LAYOUT.md S12).
+- Visibility MUST follow LAYOUT.md R16: `hidden lg:block` — the component is excluded from Mobile, Tablet, and Desktop rendering.
+
+**Status:** stable
+
+---
+
+### CollapsiblePageHeader
+
+**Purpose**
+Scroll-responsive page header with two visual states: an expanded hero with a custom background, and a compact fixed bar. Used for top-level screens where the page header should be visually prominent at rest and compact when the user is actively working with the content below.
+
+**Use When**
+- The screen is a Browse-mode pattern (P1, P2, P3, P5, P7, P8) that benefits from a prominent branded header at the top of the page
+
+**Do NOT Use When**
+- The screen uses Task mobile shell mode → use `TaskHeader` (mobile) + `PageHeader` (desktop)
+- The header has no expanded/collapsed distinction → use `PageHeader`
+- The screen is an overlay or modal — collapsible headers are for full-page content only
+
+**Props**
+- `title` — required. Large heading in expanded state, compact heading in collapsed state.
+- `count` — optional number. Shown as a `Badge` next to the title in collapsed state only. e.g. total number of items.
+- `secondaryLinks` — optional. Array of `{ label: string, icon?: TablerIcon, onClick: () => void }`. Rendered below the title in expanded state, right-aligned in collapsed state.
+- `actions` — optional. ReactNode (Buttons). Always-fixed top-right across all phases — rendered inside the fixed bar container and NEVER participates in any phase transition. This eliminates the Phase 1→2 glitch caused by a CTA fading out in the hero while the same CTA fades in on the collapsed bar.
+- `background` — optional. ReactNode rendered as an absolutely-positioned layer behind the expanded header content. Accepts any element — gradient div, image, video, etc. Not rendered in collapsed state.
+- `children` — optional. Content rendered inside the expanded hero area, below the title. Scrolls normally — does NOT appear in collapsed state. Independent of any content placed after the component.
+- `bottomOverhang` — optional boolean. Adds extra bottom padding to the hero so content placed immediately after the component (e.g. a stat card row) can visually overlap the bottom of the background. Does not affect collapsed state.
+
+**Constraints**
+
+Phase 1 — Expanded (at rest):
+- Title MUST use `text-display font-semibold text-text-on-brand`.
+- Secondary links MUST use `text-title font-medium text-text-on-brand` with optional leading icon. Links separated by a vertical divider (1px × 20px, `bg-border-color-level2`).
+- CTA is always-fixed at top-right (via the fixed bar container) — it does NOT live inside the hero's scrolling content area.
+- The `background` slot MUST be absolutely positioned to fill the expanded area. It MUST extend behind any `children` content.
+- The compact bar content (title + secondary links) is NOT visible in this phase — hidden via `-translate-y-4 opacity-0`.
+- Horizontal padding MUST follow S6: `px-200 sm:px-300 md:px-400`.
+
+Phase 2 — Collapsed on gradient:
+- Compact bar MUST be `fixed top-0 right-0 z-20` with `left-0 lg:left-[var(--layout-sidebar-width)]`. `position: sticky` is PROHIBITED — it is bounded by its containing block (the hero wrapper) and disappears once the hero fully scrolls away. On desktop (lg+), `left` MUST be offset by `var(--layout-sidebar-width)` — using `inset-x-0` places the bar's left edge behind the sidebar, hiding the title.
+- Bar wrapper MUST use `pointer-events-none`. Bar content (title + secondary links) and CTA MUST each use `pointer-events-auto` individually — this allows hero content to receive clicks through the transparent bar in Phase 1.
+- Background MUST be **transparent** — the gradient/hero background is still visible behind the bar.
+- Title MUST use `text-h3 font-semibold text-text-on-brand` (white — gradient behind).
+- Count (when provided) MUST render as a `Badge` adjacent to the title.
+- Secondary links reposition to right-aligned, using `text-body font-medium text-text-on-brand`.
+- CTA remains at top-right — it is always-fixed inside the bar container and unchanged from Phase 1.
+- Horizontal padding MUST follow S6.
+- MUST include safe area inset: `pt-[env(safe-area-inset-top)]` per LAYOUT.md R15.
+
+Phase 3 — Collapsed on white:
+- Triggered when ≤ 50% of the hero background remains visible in the scroll container (50% scrolled threshold).
+- Compact bar background transitions to opaque: `bg-surface-level1 border-b border-border-color-level2`.
+- Title color transitions to `text-text-level1` (size remains `text-h3 font-semibold`).
+- Secondary links color transitions to `text-text-level2` (size remains `text-body font-medium`).
+- CTA unchanged.
+- MUST include safe area inset: `pt-[env(safe-area-inset-top)]` per LAYOUT.md R15.
+- Horizontal padding MUST follow S6.
+
+Transition:
+- Phase detection uses a passive `scroll` event listener on the auto-detected scrollable ancestor, throttled with `requestAnimationFrame`. `IntersectionObserver` is NOT used — it proved unreliable when the scroll container is a nested `overflow-y: auto` element (`root: null` fires on document scroll only). No `scrollContainerRef` prop — auto-detection via `getComputedStyle` traversal at mount time (`overflowY === 'auto' || 'scroll'`).
+- Phase 1 → 2 trigger: `scrollTop > 0` (any scroll at all).
+- Phase 2 → 3 trigger: `visibleHeroHeight / heroHeight ≤ 0.5` (50% of hero scrolled away).
+- Phase 1 → 2 animation: bar content (title + secondary links) slides in from above (`-translate-y-4 opacity-0` → `translate-y-0 opacity-100`). Expanded hero content (centered title + secondary links) slides down and fades out (`translate-y-0 opacity-100` → `translate-y-4 opacity-0`).
+- Phase 2 → 3 animation: bar background and text colors transition only — no translate.
+- All transitions MUST use `duration-300 ease-in-out`. Abrupt state switches are PROHIBITED.
+
+Responsive:
+- Visible at Desktop and Wide only. At Mobile and Tablet, `CollapsiblePageHeader` is not rendered — `MobilePageHeader` provides page identity at those breakpoints.
+- The `actions` CTA (via the `actions` prop) is therefore not visible at Mobile and Tablet.
+- **FAB pairing:** When `actions` contains a primary CTA, Claude MUST automatically render a FAB as a sibling element in the page at Mobile and Tablet per LAYOUT.md R19. The FAB icon MUST match the CTA's leading icon. The `CollapsiblePageHeader` component does not auto-render a FAB — Claude MUST add it whenever this component is used with an `actions` CTA.
+
+**Status:** implemented — verified on Ads Manager screen (P3 Data List).
+
+---
+
 ## 4. Component Selection Decision Rules
 
 **DS1.** When displaying a list of items:
@@ -1427,6 +1924,12 @@ After components are selected:
 - UX_RULES.md MUST be applied for grouping and layout optimization
 
 DS7 does NOT control layout, density, or grouping.
+
+**DS8.** When providing navigation:
+- Desktop/Wide primary app navigation → `Sidebar` + `SidebarNavItem`
+- Mobile/Tablet primary app navigation (Browse mode) → `BottomNavBar`
+- Mobile/Tablet task flow header (Task mode) → `TaskHeader`
+- Mobile/Tablet overflow or contextual bottom overlay → `BottomSheet`
 
 ---
 

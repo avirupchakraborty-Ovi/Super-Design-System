@@ -1,6 +1,6 @@
 # PATTERNS.md
 ## Super Design System — Screen Composition Rules
-`Version 1.5 | Depends on: LAYOUT.md, COMPONENT_MAP.md | Priority: Third — see AGENTS.md for full priority chain`
+`Version 2.2 | Depends on: LAYOUT.md, COMPONENT_MAP.md | Priority: Third — see AGENTS.md for full priority chain`
 
 ---
 
@@ -56,7 +56,10 @@ The following slots appear in multiple patterns. Their definitions are canonical
 ### [page-header]
 - **Allowed:** Heading text, optional sub-text, `Button`, `IconButton`, `Badge`, `Tabs` (line variant only)
 - **Do NOT Allow:** `StatCard`, `Card`, `DataTable`, `Modal`, form controls
-- **Constraints:** MUST follow section header structure from LAYOUT.md SC5: `[Heading + optional subtext — left]` `[optional actions — right]`. Section-level action buttons MUST be right-aligned (per LAYOUT.md SC4). At most one `Button variant="primary"` or `variant="brand"` per page header. For `centered` layouts, the page header inner content MUST be constrained to `var(--layout-content-max-width)` with `mx-auto`. For `aside-panel` layouts, the page header inner content MUST mirror the column structure of the content block below (per LAYOUT.md S13). Heading text MUST use `text-h2 font-semibold text-text-level1`. Sub-text (when present) MUST use `text-body font-normal text-text-level3`.
+- **Constraints:** MUST follow section header structure from LAYOUT.md SC5: `[Heading + optional subtext — left]` `[optional actions — right]`. Section-level action buttons MUST be right-aligned (per LAYOUT.md SC4). At most one `Button variant="primary"` or `variant="brand"` per page header. For `centered` layouts, the page header inner content MUST be constrained to `var(--layout-content-max-width)` with `mx-auto`. For `aside-panel` layouts, the page header inner content MUST follow the responsive rules in LAYOUT.md S13 — column mirroring applies only at Wide where the aside panel is visible; at Desktop, a full-width flex row is used instead. Heading text MUST use `text-h2 font-semibold text-text-level1`. Sub-text (when present) MUST use `text-body font-normal text-text-level3`. Vertical padding MUST use `py-250` (20px top and bottom). Horizontal padding MUST follow the responsive breakpoint scale: `px-200` at Mobile, `sm:px-300` at Tablet, `md:px-400` at Desktop, `lg:px-400` at Wide. These heading and sub-text rules apply to standard `PageHeader`. When `CollapsiblePageHeader` is used, its own phase-specific constraints in COMPONENT_MAP.md take precedence (per conflict resolution priority: COMPONENT_MAP.md overrides PATTERNS.md).
+- **Responsive visibility:** The [page-header] outer container MUST be hidden at Mobile and Tablet for Task-mode patterns (Pattern 4, Pattern 9, and any other Task-mode pattern per Section 6) — `TaskHeader` (LAYOUT.md R13) replaces it at those breakpoints. The responsive visibility class is `hidden md:block` (per LAYOUT.md R16). For Browse-mode patterns, the [page-header] is visible at all breakpoints. Page header inner-content responsive structure by layout type MUST follow LAYOUT.md S13 and S15.
+- **Component options:** `PageHeader` (static — Task-mode patterns at Desktop/Wide, or Browse-mode patterns without collapsible behavior), `CollapsiblePageHeader` (scroll-responsive, Browse-mode patterns at all breakpoints). Selection follows COMPONENT_MAP.md decision rules.
+- **FAB pairing (Browse mode, Mobile and Tablet):** When [page-header] includes a primary CTA (`Button variant="primary"` or `variant="brand"`), Claude MUST automatically include a FAB at Mobile and Tablet per LAYOUT.md R19 — no explicit instruction is required. The FAB is the mobile/tablet equivalent of the desktop CTA — same action, condensed to icon-only. Omitting the FAB when a desktop CTA is present is a rule violation.
 
 ### [section-banner]
 - **Allowed:** `Nudge` (contextual type), `PromoBanner`
@@ -141,7 +144,7 @@ Provides an at-a-glance overview of key metrics, performance trends, recent acti
 - **[metrics]:** Recommended 2–3 items. Hard maximum: 4 items. If the requested content exceeds 4, issue a DENSITY FLAG before generating output (see AGENTS.md). If only 1 metric exists, use `StatCard` full-width without a grid wrapper (per LAYOUT.md LB8). Grid configuration follows LAYOUT.md grid rules.
 - **[primary-chart]:** Exactly 1 `ChartFullWidth` or omit slot entirely.
 - **[activity]:** Show `EmptyState` when 0 records. Paginate when `DataTable` exceeds 10 rows. Paginate when `TableList` exceeds 20 rows.
-- **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
+- **[mobile]:** At Mobile and Tablet breakpoints (0–1023px), DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
 - **[quick-actions]:** Recommended 2–3 items. Hard maximum: 4 items. If the requested content exceeds 4, issue a DENSITY FLAG before generating output (see AGENTS.md). If fewer actions exist, MAY render available actions or fallback to `Button`-based actions.
 
 ---
@@ -215,7 +218,7 @@ Displays detailed performance trends and breakdowns for a single data domain (e.
 - **[metric-summary] (single card):** If only 1 ChartCard exists, render it full-width without a grid wrapper (per LAYOUT.md LB8). The 2-or-3-column grid requirement applies only when 2 or more ChartCards are present.
 - **[trend-chart]:** Exactly 1 `ChartFullWidth`.
 - **[breakdown]:** Show `EmptyState` when 0 records. Paginate when `DataTable` exceeds 10 rows.
-- **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
+- **[mobile]:** At Mobile and Tablet breakpoints (0–1023px), DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
 
 ---
 
@@ -286,7 +289,7 @@ Displays a browsable, filterable, and optionally sortable set of data records. T
 - **[filter-bar] tabs:** Recommended 3–5 tabs. Hard maximum: 7 tabs. If the requested tab count exceeds 7, issue a DENSITY FLAG before generating output — recommended alternative is to collapse overflow tabs into a `DropdownMenu` (see AGENTS.md).
 - **[content]:** Show `EmptyState` when 0 records. Show filtered-empty message inline when filters return 0 results without resetting the filter bar.
 - **[pagination]:** Render `Pagination` when `DataTable` exceeds 10 rows. Render `Pagination` when `TableList` exceeds 20 rows. Hide `Pagination` when only 1 page exists.
-- **[mobile]:** At Mobile breakpoint, DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
+- **[mobile]:** At Mobile and Tablet breakpoints (0–1023px), DataTable toolbar and pagination controls adapt automatically (icon-only buttons, hidden "Items per page" label). No pattern-level change is required.
 
 ---
 
@@ -296,6 +299,8 @@ Displays a browsable, filterable, and optionally sortable set of data records. T
 - Active filter state MUST be reflected in the [filter-bar] component (active tab, selected dropdown value).
 - When [content] transitions to loading, skeleton loaders MUST occupy identical space to loaded content (per LAYOUT.md ST3, ST4).
 - Error state MUST be localized to [content] — it MUST NOT replace the page (per LAYOUT.md ST5).
+- [page-header] MAY use `CollapsiblePageHeader` instead of standard `PageHeader` when the screen benefits from a prominent branded header with scroll-to-compact behavior (per LAYOUT.md R17). The collapsed state satisfies the [page-header] slot requirements — title, optional actions, fixed-position persistence. Any [metrics] or [summary] slot is independent of `CollapsiblePageHeader` — rendered after it in normal document flow, optionally using the `bottomOverhang` prop on `CollapsiblePageHeader` to visually overlap the hero background.
+- **Mobile sticky panel (Browse mode):** At Mobile and Tablet, [filter-bar] and [content] MUST be co-located inside the sticky panel structure defined in LAYOUT.md R12c. The DataTable inside the panel MUST use `fillHeight`. A separate `hidden lg:flex` [filter-bar] and `hidden lg:block` [content] wrapper MUST be rendered for Desktop and Wide — these are independent of the mobile panel and follow standard layout rules. Rendering a single combined filter bar and a non-`fillHeight` DataTable for all breakpoints is PROHIBITED when toolbar and column-header pinning is required at Mobile and Tablet.
 
 ---
 
@@ -349,6 +354,7 @@ Collects user input across one or more fields and submits it as a complete data 
 - **Allowed:** `Button`
 - **Do NOT Allow:** `IconButton`, `GradientButton`, any non-Button component
 - **Constraints:** MUST include a primary action `Button`. SHOULD include a secondary action `Button`. MAY include additional actions if needed. Buttons MUST be right-aligned (per LAYOUT.md SC4).
+- [form-actions] MUST NOT repeat CTA buttons that already appear in [page-header] for the same operation. If [page-header] contains action buttons (e.g. Save, Cancel, Publish) scoped to the same task, [form-actions] MUST NOT be included. This applies to Pattern 9 specifically — Pattern 4 and Pattern 7 are unaffected as their [page-header] carries only a title and description, not action buttons.
 
 ---
 
@@ -658,11 +664,11 @@ A primary content area (form, rule builder, or configuration flow) with a supple
 ---
 
 #### Layout
-Follows LAYOUT.md S10 (`aside-panel`) and S12:
-- Outer wrapper: `flex gap-300 w-fit mx-auto` or `flex gap-400 w-fit mx-auto` — `w-fit` shrinks the container to the natural width of its children so that `mx-auto` centers the combined layout as a unit
-- Main column: `w-[var(--layout-content-max-width)] min-w-0` — fixed width using the content max-width token. MUST NOT use `flex-1`.
+Follows LAYOUT.md S10 (`aside-panel`), S12, and S15 (responsive matrix):
+- Outer wrapper (Desktop/Wide): `flex gap-300 w-fit mx-auto` or `flex gap-400 w-fit mx-auto` — `w-fit` shrinks the container to the natural width of its children so that `mx-auto` centers the combined layout as a unit. At Mobile/Tablet: `w-full` (with `sm:w-fit sm:mx-auto` at Tablet) per LAYOUT.md S15.
+- Main column (Desktop/Wide): `w-[var(--layout-content-max-width)] min-w-0` — fixed width using the content max-width token. At Mobile: `w-full`. At Tablet: `sm:w-[var(--layout-content-max-width)] min-w-0`. MUST NOT use `flex-1`.
 - Aside column: fixed width per Figma spec, declared as SP8 approved exception with inline comment, `sticky top-0`
-- Aside hidden below xl breakpoint: `hidden xl:block`
+- Aside hidden below lg breakpoint (Wide): `hidden lg:block`
 
 ---
 
@@ -680,12 +686,12 @@ Follows LAYOUT.md S10 (`aside-panel`) and S12:
 **[main-column]**
 - **Allowed:** Form fields, rule builder groups, configuration sections — following Pattern 4 or Pattern 7 slot rules within this column. `SectionHeader` MUST be used for any named sub-section heading.
 - **Do NOT Allow:** `DataTable`, `ChartFullWidth`, `StatCard` grid at the top level of this column
-- **Constraints:** Fields MUST follow a vertical flow by default. Field arrangement MUST be optimized per UX_RULES.md. Sub-sections MUST use `SectionHeader`.
+- **Constraints:** Fields MUST follow a vertical flow by default. Field arrangement MUST be optimized per UX_RULES.md. Sub-sections MUST use `SectionHeader`. Width MUST be responsive: `w-full` at Mobile, `sm:w-[var(--layout-content-max-width)] min-w-0` at Tablet and above. Fixed-width-only (no mobile fallback) is PROHIBITED — it causes horizontal overflow below 768px. The outer wrapper containing both [main-column] and [aside-panel] MUST use `flex gap-300 w-full sm:w-fit sm:mx-auto items-start` — `w-full` at Mobile, `w-fit mx-auto` from Tablet onward (per LAYOUT.md S15 aside-panel matrix).
 
 **[aside-panel]**
 - **Allowed:** Read-only summary content, `StatCard`, live preview component, contextual `Nudge`, `Badge`, text blocks using design tokens
 - **Do NOT Allow:** Primary form controls (`Input`, `DropdownMenu`, `Toggle`) as the main interactive element. The aside MUST NOT be the primary task surface.
-- **Constraints:** Width is a fixed SP8 approved exception. MUST be `sticky top-0`. MUST be hidden below the xl breakpoint (`hidden xl:block`).
+- **Constraints:** Width is a fixed SP8 approved exception. MUST be `sticky top-0`. MUST be hidden below the lg breakpoint (`hidden lg:block`). When aside panel content is critical to the task (e.g. live reach estimate, running total, pricing summary), it MUST be accessible at Mobile and Tablet via an `Alert type="info"` trigger positioned immediately after `TaskHeader`, before the scrollable content area. The Alert MUST use `dismissible={false}` and an `actionLabel` that opens a `BottomSheet` containing the aside content. The Alert is visible at Mobile/Tablet only (`md:hidden`). Critical content MUST NOT be permanently discarded. Non-critical aside content (supplementary tips, contextual nudges) MAY be omitted at Mobile and Tablet.
 
 ---
 
@@ -701,7 +707,8 @@ Follows LAYOUT.md S10 (`aside-panel`) and S12:
 - Aside panel MUST update reactively when main column state changes (where applicable)
 - At Mobile/Tablet, aside panel content that is critical to the task MUST be surfaced inline within [main-column] — do not permanently discard it
 - [page-header] actions affect the entire builder, not a single column
-- Page header inner content MUST mirror the column structure of the content block below (per LAYOUT.md S13).
+- Page header inner content MUST follow LAYOUT.md S13 responsive rules: hidden at Mobile/Tablet (`hidden md:block`), full-width flex at Desktop, column-mirrored at Wide. Column mirroring applies ONLY at Wide where the aside panel is visible. See also LAYOUT.md S15 matrix.
+- **[form-actions] MUST NOT be rendered inside [main-column] for Pattern 9.** Actions for the builder belong exclusively in [page-header]. This overrides the [form-actions] slot inherited from Pattern 4 — Pattern 9's [page-header] replaces the bottom form-actions row entirely at all breakpoints. The persistent [page-header] satisfies the "actions must remain in viewport" requirement from Pattern 4 Behavior Rules — a duplicate [form-actions] row is PROHIBITED.
 
 ---
 
@@ -756,6 +763,30 @@ Always use `OperatorChip`. Never use a raw `<button>`, a static text label, or `
 **P10.** When no pattern matches, compose from scratch using LAYOUT.md shell and grid rules + COMPONENT_MAP.md component selection. Do not force-fit an existing pattern.
 
 **P11.** When the screen has a primary creation, configuration, or rule-building task alongside a fixed supplementary panel (preview, estimator, summary) → **Builder / Aside-Panel (Pattern 9)**
+
+---
+
+## 6. Mobile Shell Mode Assignment
+
+At Mobile and Tablet breakpoints, each pattern MUST use the mobile shell mode defined below (per LAYOUT.md R11).
+
+| Pattern | Mobile shell mode | Notes |
+|---------|-------------------|-------|
+| Pattern 1 — Dashboard | Browse | |
+| Pattern 2 — Analytics | Browse | |
+| Pattern 3 — Data List | Browse | |
+| Pattern 4 — Form / Configuration | Task | Multi-step flows show step indicator in `TaskHeader`. Single-step flows omit it. |
+| Pattern 5 — Detail Page | Browse | |
+| Pattern 6 — Split View | Browse | At Mobile, list/detail sequential navigation still uses `BottomNavBar` — the navigation collapse is handled within the pattern, not by switching shell mode. |
+| Pattern 7 — Settings Page | Browse | |
+| Pattern 8 — Empty / Zero State | Browse | |
+| Pattern 9 — Builder / Aside-Panel | Task | |
+
+**M1.** When a screen uses `proportional-split` layout (LAYOUT.md S14), the `TaskHeader` MUST include a Preview secondary action that opens the hidden preview column as a full-screen overlay. This is the only layout type where the Preview action is permitted.
+
+**M2.** When a pattern is assigned Task mode, the `BottomNavBar` MUST NOT be rendered. When a pattern is assigned Browse mode, the `TaskHeader` and sticky [form-actions] footer MUST NOT be rendered.
+
+**M3.** If a screen does not match any defined pattern (P10 — compose from scratch), default to Browse mode unless the screen's primary intent is creation or editing, in which case use Task mode.
 
 ---
 

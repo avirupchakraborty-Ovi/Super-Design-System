@@ -1,4 +1,26 @@
-export function SuperProfileLogo({ className }: { className?: string }) {
+export interface SuperProfileLogoProps {
+  /**
+   * "full"    — icon mark + wordmark (default). Used in the sidebar.
+   * "compact" — icon mark only, 34×34. Used in the mobile page header.
+   */
+  variant?: "full" | "compact";
+  className?: string;
+}
+
+export function SuperProfileLogo({ variant = "full", className }: SuperProfileLogoProps) {
+  if (variant === "compact") {
+    return (
+      // sp-logo-filled.svg is a 136×136px PNG @ 4× rendered at 34×34 — crisp at all densities
+      <img
+        src="/icons/sp-logo-filled.svg"
+        alt="SuperProfile"
+        width={34}
+        height={34}
+        className={`rounded-500 ${className ?? ""}`.trim()}
+      />
+    );
+  }
+
   return (
     <svg
       width="155"
